@@ -28,6 +28,8 @@ noise functions themselves do not, however.
 The Perlin improved noise functions can also generate fBm (fractal Brownian
 motion) noise by combining multiple octaves of Perlin noise. Shader functions
 for convenient generation of turbulent noise are also included.
+
+1.1.0 Adds support for Python 3
 ''',
 	author='Casey Duncan',
 	author_email='casey.duncan@gmail.com',
