@@ -11,7 +11,7 @@ else:
 
 setup(
 	name='noise',
-    version='1.0b3',
+    version='1.1.0',
 	description='Perlin noise for Python',
 	long_description='''\
 Perlin noise is ubiquitous in modern CGI. Used for procedural texturing,
@@ -26,11 +26,8 @@ the included examples require Pyglet (http://www.pyglet.org), the native-code
 noise functions themselves do not, however.
 
 The Perlin improved noise functions can also generate fBm (fractal Brownian
-motion) noise by combining multiple octaves of Perlin noise. Functions for
-convenient generation of turbulent noise are also included.
-
-Version 1.0b3 fixed problems compiling with Visual C++ on Windows.
-Thanks to Stas Kounitski for fixing this issue!
+motion) noise by combining multiple octaves of Perlin noise. Shader functions
+for convenient generation of turbulent noise are also included.
 ''',
 	author='Casey Duncan',
 	author_email='casey.duncan@gmail.com',
@@ -42,6 +39,9 @@ Thanks to Stas Kounitski for fixing this issue!
         'Operating System :: MacOS :: MacOS X',
         'Operating System :: Microsoft :: Windows',
         'Operating System :: POSIX',
+        'Programming Language :: C',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 3',
     ],
 
     package_dir={'noise': ''},
