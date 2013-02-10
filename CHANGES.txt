@@ -1,3 +1,5 @@
-- 1.1 Feb 2013
+1.1 -- Feb 2013
 
-  Fixed C-extensions to build in Python 3.
+  - Fixed C-extensions to build in Python 3.
+
+  - Fixed broken 3D simplex noise implementation.
