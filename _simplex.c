@@ -173,14 +173,16 @@ py_noise3(PyObject *self, PyObject *args)
 		int i;
 		float freq = 1.0f;
 		float amp = 1.0f;
+		float max = 0.0f;
 		float total = 0.0f;
 
 		for (i = 0; i < octaves; i++) {
 			total += noise3(x * freq, y * freq, z * freq) * amp;
 			freq *= 2.0f;
+			max += amp;
 			amp *= persistence;
 		}
-		return (PyObject *) PyFloat_FromDouble((double) total);
+		return (PyObject *) PyFloat_FromDouble((double) (total / max));
 	} else {
 		PyErr_SetString(PyExc_ValueError, "Expected octaves value > 0");
 		return NULL;
