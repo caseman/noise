@@ -51,12 +51,15 @@ noise2(float x, float y)
 }
 
 static PyObject *
-py_noise2(PyObject *self, PyObject *args)
+py_noise2(PyObject *self, PyObject *args, PyObject *kwargs)
 {
 	float x, y;
 	int octaves = 1;
 	float persistence = 0.5f;
-	if (!PyArg_ParseTuple(args, "ff|if:noise2", &x, &y, &octaves, &persistence))
+	static char *kwlist[] = {"x", "y", "octaves", "persistence", NULL};
+
+	if (!PyArg_ParseTupleAndKeywords(args, kwargs, "ff|if:snoise2", kwlist,
+		&x, &y, &octaves, &persistence))
 		return NULL;
 	
 	if (octaves == 1) {
@@ -158,12 +161,16 @@ noise3(float x, float y, float z)
 }
 
 static PyObject *
-py_noise3(PyObject *self, PyObject *args)
+py_noise3(PyObject *self, PyObject *args, PyObject *kwargs)
 {
 	float x, y, z;
 	int octaves = 1;
 	float persistence = 0.5f;
-	if (!PyArg_ParseTuple(args, "fff|if:noise3", &x, &y, &z, &octaves, &persistence))
+
+	static char *kwlist[] = {"x", "y", "z", "octaves", "persistence", NULL};
+
+	if (!PyArg_ParseTupleAndKeywords(args, kwargs, "fff|if:snoise3", kwlist,
+		&x, &y, &z, &octaves, &persistence))
 		return NULL;
 	
 	if (octaves == 1) {
@@ -205,14 +212,14 @@ noise4(float x, float y, float z, float w)
 */
 
 static PyMethodDef simplex_functions[] = {
-	{"noise2", py_noise2, METH_VARARGS, 
+	{"noise2", (PyCFunction)py_noise2, METH_VARARGS | METH_KEYWORDS, 
 		"noise2(x, y, octaves=1, persistence=0.5) return simplex noise value for specified "
 		"coordinate.\n\n"
 		"octaves -- specifies the number of passes, defaults to 1 (simple noise).\n\n"
 		"persistence -- specifies the amplitude of each successive octave relative\n"
 		"to the one below it. Defaults to 0.5 (each higher octave's amplitude\n"
 		"is halved). Note the amplitude of the first pass is always 1.0."},
-	{"noise3", py_noise3, METH_VARARGS, 
+	{"noise3", (PyCFunction)py_noise3, METH_VARARGS | METH_KEYWORDS, 
 		"noise3(x, y, z, octaves=1, persistence=0.5) return simplex noise value for "
 		"specified coordinate\n\n"
 		"octaves -- specifies the number of passes, defaults to 1 (simple noise).\n\n"
