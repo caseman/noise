@@ -3,3 +3,13 @@
   - Fixed C-extensions to build in Python 3.
 
   - Fixed broken 3D simplex noise implementation.
+
+  - Add kwarg support to simplex noise functions
+  
+  - Fixed range of 3d simplex noise with multiple octaves
+
+  - Fixed crash in perlin noise due to index out of range
+
+  - Added unit tests
+
+  - Moved code to github
