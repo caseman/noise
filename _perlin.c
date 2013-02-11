@@ -91,8 +91,10 @@ noise2(float x, float y, const float repeatx, const float repeaty, const int bas
 	int j = (int)floorf(fmodf(y, repeaty));
 	int ii = (int)fmodf(i + 1, repeatx);
 	int jj = (int)fmodf(j + 1, repeaty);
-	i += base; j += base;
-	ii += base; jj += base;
+	i = (i & 255) + base;
+	j = (j & 255) + base;
+	ii = (ii & 255) + base;
+	jj = (jj & 255) + base;
 
 	x -= floorf(x); y -= floorf(y);
 	fx = x*x*x * (x * (x * 6 - 15) + 10);
@@ -169,8 +171,12 @@ noise3(float x, float y, float z, const int repeatx, const int repeaty, const in
 	int ii = (int)fmodf(i + 1,  repeatx);
 	int jj = (int)fmodf(j + 1, repeaty);
 	int kk = (int)fmodf(k + 1, repeatz);
-	i += base; j += base; k += base;
-	ii += base; jj += base; kk += base;
+	i = (i & 255) + base;
+	j = (j & 255) + base;
+	k = (k & 255) + base;
+	ii = (ii & 255) + base;
+	jj = (jj & 255) + base;
+	kk = (kk & 255) + base;
 
 	x -= floorf(x); y -= floorf(y); z -= floorf(z);
 	fx = x*x*x * (x * (x * 6 - 15) + 10);
