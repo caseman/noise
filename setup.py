@@ -34,7 +34,7 @@ for convenient generation of turbulent noise are also included.
 ''',
 	author='Casey Duncan',
 	author_email='casey.duncan@gmail.com',
-	url='http://code.google.com/p/caseman',
+	url='https://github.com/caseman/noise',
     classifiers = [
         'Development Status :: 4 - Beta',
         'Topic :: Multimedia :: Graphics',
