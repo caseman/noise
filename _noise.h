@@ -1,16 +1,5 @@
 // Copyright (c) 2008, Casey Duncan (casey dot duncan at gmail dot com)
 // see LICENSE.txt for details
-// $Id$
-
-typedef union f3 {
-	float xyz[3];
-	float x, y, z;
-} float3;
-
-typedef union f4 {
-	float xyzw[4];
-	float x, y, z, w;
-} float4;
 
 const float GRAD3[][3] = {
 	{1,1,0},{-1,1,0},{1,-1,0},{-1,-1,0}, 
