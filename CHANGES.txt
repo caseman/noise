@@ -1,3 +1,10 @@
+1.1.1 -- Feb 14, 2013
+
+  - Fixed artifact in 3D simplex noise output
+
+  - Updated animate_tex example to use simplex noise
+
+
 1.1 -- Feb 2013
 
   - Fixed C-extensions to build in Python 3.
@@ -6,7 +13,7 @@
 
   - Add kwarg support to simplex noise functions
   
-  - Fixed range of 3d simplex noise with multiple octaves
+  - Fixed range of 3D simplex noise with multiple octaves
 
   - Fixed crash in perlin noise due to index out of range
 

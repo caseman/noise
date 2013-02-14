@@ -11,7 +11,7 @@ else:
 
 setup(
 	name='noise',
-    version='1.1.0',
+    version='1.1.1',
 	description='Perlin noise for Python',
 	long_description='''\
 Perlin noise is ubiquitous in modern CGI. Used for procedural texturing,
@@ -30,7 +30,9 @@ motion) noise by combining multiple octaves of Perlin noise. Shader functions
 for convenient generation of turbulent noise are also included.
 
 1.1.0 Adds support for Python 3, and fixes several long-standing bugs
-      See CHANGES.txt for more details
+1.1.1 Fixes an artifact in 3D simplex noise output
+
+See CHANGES.txt for more details
 ''',
 	author='Casey Duncan',
 	author_email='casey.duncan@gmail.com',
