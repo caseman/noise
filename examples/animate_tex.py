@@ -10,7 +10,7 @@ import pyglet
 from pyglet.gl import *
 import ctypes
 import noise
-from noise import pnoise3
+from noise import pnoise3, snoise3
 
 def create_3d_texture(width, scale):
 	"""Create a grayscale 3d texture map with the specified 
@@ -31,7 +31,7 @@ def create_3d_texture(width, scale):
 	for z in coords:
 		for y in coords:
 			for x in coords:
-				v = pnoise3(x * scale - half, y * scale - half, z * scale - half, 4)
+				v = snoise3(x * scale - half, y * scale - half, z * scale - half, octaves=4, persistence=0.25)
 				texel[x + (y * width) + (z * width**2)] = int(v * 127.0)
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
 	glTexImage3D(GL_TEXTURE_3D, 0, GL_LUMINANCE, width, width, width, 0, 
@@ -46,7 +46,7 @@ if __name__ == '__main__':
 		config=pyglet.gl.Config(sample_buffers=1, samples=4, double_buffer=True, depth_size=24))
 
 	#noise.randomize()
-	create_3d_texture(64, 8.0/64.0)
+	create_3d_texture(128, 1/48.0)
 	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_REPEAT)
 	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_REPEAT)
 	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
@@ -94,7 +94,7 @@ if __name__ == '__main__':
 		if d > 1.0:
 			d -= 1.0
 
-	pyglet.clock.schedule_interval(update, 0.1)
+	pyglet.clock.schedule_interval(update, 1/30.0)
 	
 	win.set_visible()
 	win.set_exclusive_mouse()
