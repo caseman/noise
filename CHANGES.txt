@@ -4,6 +4,8 @@
 
   - Updated animate_tex example to use simplex noise
 
+  - Updated 2dtexture example to work with Python 3 and use simplex noise
+
 
 1.1 -- Feb 2013
 
