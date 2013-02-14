@@ -121,7 +121,7 @@ noise3(float x, float y, float z)
 			ASSIGN(o2, 1, 0, 1);
 		}
 	} else {
-		if (pos[0][0] < pos[0][2]) {
+		if (pos[0][1] < pos[0][2]) {
 			ASSIGN(o1, 0, 0, 1);
 			ASSIGN(o2, 0, 1, 1);
 		} else if (pos[0][0] < pos[0][2]) {
