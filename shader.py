@@ -121,7 +121,7 @@ class Shader(object):
         if self.shader == 0:
             raise GLSLException('faled to create shader object')
 
-        all_source = ['\n'.join(self._source())]
+        all_source = ['\n'.join(self._source()).encode('utf-8')]
         prog = (c_char_p * len(all_source))(*all_source)
         length = (c_int * len(all_source))(-1)
         glShaderSourceARB(self.shader,
@@ -223,7 +223,8 @@ class ShaderProgram(object):
         except:
             if self.program == 0:
                 self.link()
-            self.__class__._uloc_[var] = v = glGetUniformLocationARB(self.program, var)
+            self.__class__._uloc_[var] = v = glGetUniformLocationARB(
+                self.program, var.encode('utf-8'))
             return v
 
     def uset1F(self, var, x):
