@@ -47,22 +47,18 @@ atmosphere_frag_shader = shader.FragmentShader('atmosphere', shader_noise_glsl +
 	varying vec4 color;
 
 	void main(void) {
-		float t = fbmnoise(gl_TexCoord[1].xyz * 2.0 + time * 0.003, 6);
-		vec3 turb = vec3(sin(t*t), cos(t+t), 0) * 0.025;
-		float h = fbmnoise(turb + position, 6) + 1.0;
-		h = h*h*h*h * 0.15;
-		if (h > 0.0) {
-			/* Calculate the lighting */
-			vec3 N = normalize(normal);
-			float intensity = max(0.0, dot(N, normalize(lightvec)));
-			float glare = max(0.0, dot(N, normalize(gl_LightSource[0].halfVector.xyz)));
-			vec4 ambient = gl_LightSource[0].ambient;
-			vec4 diffuse = gl_LightSource[0].diffuse * intensity;
-			vec4 specular = gl_LightSource[0].specular * pow(glare, 64.0);
-			gl_FragColor = (ambient + diffuse + specular) * color * h;
-		} else {
-			discard;
-		}
+		float t = fbmnoise(position * 2.0 + time * 0.001, 2);
+		vec3 turb = vec3(sin(t * 0.5), cos(t), 0) * 0.04;
+		float h = fbmturbulence(turb + position * 0.5 + time * 0.002, 6) * 1.35;
+		h = h*h;
+		/* Calculate the lighting */
+		vec3 N = normalize(normal);
+		float intensity = max(0.0, dot(N, normalize(lightvec)));
+		float glare = max(0.0, dot(N, normalize(gl_LightSource[0].halfVector.xyz)));
+		vec4 ambient = gl_LightSource[0].ambient;
+		vec4 diffuse = gl_LightSource[0].diffuse * intensity;
+		vec4 specular = gl_LightSource[0].specular * pow(glare, 64.0);
+		gl_FragColor = (ambient + diffuse + specular) * color * h;
 	}
 ''')
 atmosphere_prog = shader.ShaderProgram(vert_shader, atmosphere_frag_shader)
@@ -79,9 +75,10 @@ if __name__ == '__main__':
 	glEnable(GL_LIGHTING)
 	glEnable(GL_LIGHT0)
 	fourfv = ctypes.c_float * 4
-	glLightfv(GL_LIGHT0, GL_POSITION, fourfv(1, 0, 1.0, -0.5))
+	glLightfv(GL_LIGHT0, GL_POSITION, fourfv(1, 0, 1.0, 0.5))
 	glLightfv(GL_LIGHT0, GL_AMBIENT, fourfv(0.001, 0.001, 0.001, 1.0))
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, fourfv(2.0, 2.0, 2.0, 1.0))
+	glLightfv(GL_LIGHT0, GL_SPECULAR, fourfv(0.001, 0.001, 0.001, 1.0))
 	glEnable(GL_COLOR_MATERIAL)
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
@@ -103,7 +100,7 @@ if __name__ == '__main__':
 	glEnable(GL_CULL_FACE)
 	glColor4f(1, 1, 1, 1)
 
-	atmosphere_depth = 0.015
+	atmosphere_depth = 0.01
 	atmosphere_speed = 0.85
 
 	yrot = spin = 0.0
@@ -114,7 +111,7 @@ if __name__ == '__main__':
 		glViewport(0, 0, width, height)
 		glMatrixMode(GL_PROJECTION)
 		glLoadIdentity()
-		gluPerspective(70, 1.0*width/height, 0.1, 1000.0)
+		gluPerspective(20, 1.0*width/height, 0.1, 1000.0)
 		glMatrixMode(GL_MODELVIEW)
 		glLoadIdentity()
 	win.on_resize = on_resize
@@ -130,7 +127,7 @@ if __name__ == '__main__':
 		global xrot, yrot
 		win.clear()
 		glLoadIdentity()
-		glTranslatef(0, 0, -1.5)
+		glTranslatef(0, 0, -4.5)
 		glRotatef(xrot, 1.0, 0.0, 0.0)
 		glRotatef(yrot, 0.0, 1.0, 0.0)
 		glRotatef(spin, 0.0, 0.0, 1.0)
@@ -140,7 +137,7 @@ if __name__ == '__main__':
 		gluSphere(earth, 0.65, 60, 60)
 
 		glLoadIdentity()
-		glTranslatef(0, 0, -1.5)
+		glTranslatef(0, 0, -4.5)
 		glRotatef(xrot, 1.0, 0.0, 0.0)
 		glRotatef(yrot, 0.0, 1.0, 0.0)
 		glRotatef(spin * atmosphere_speed, 0.0, 0.0, 1.0)

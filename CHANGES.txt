@@ -6,6 +6,10 @@
 
   - Updated 2dtexture example to work with Python 3 and use simplex noise
 
+  - Fix shaders to work with Python 3
+
+  - Pretty up the atmosphere shader noise example.
+
 
 1.1 -- Feb 2013
 
