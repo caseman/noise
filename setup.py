@@ -30,7 +30,7 @@ motion) noise by combining multiple octaves of Perlin noise. Shader functions
 for convenient generation of turbulent noise are also included.
 
 1.1.0 Adds support for Python 3, and fixes several long-standing bugs
-1.1.1 Fixes an artifact in 3D simplex noise output
+1.1.1 Fixes an artifact in 3D simplex noise output, and fixes the shaders on python 3.
 
 See CHANGES.txt for more details
 ''',
