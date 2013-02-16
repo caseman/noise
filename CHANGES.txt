@@ -10,6 +10,8 @@
 
   - Pretty up the atmosphere shader noise example.
 
+  - Improve lighting/brightness of planet example.
+
 
 1.1 -- Feb 2013
 

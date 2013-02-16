@@ -39,7 +39,7 @@ def create_bands_texture(bands=14.0, stretch=2.0, turbulence=8.0,
 			v = pnoise2(
 				px / stretch / TEXTURE_SIZE, py * bands / TEXTURE_SIZE, octaves=4,
 				repeaty=bands, repeatx=1.0/stretch)
-			r, g, b = blend((v + 1.0) / 2.0, color1, color2, 0.85 + (p**5)*0.003)
+			r, g, b = blend((v + 1.0) / 2.0, color1, color2, 1.75 + (p**5)*0.003)
 			texel[(x + (y * TEXTURE_SIZE))*3] = max(min(int(r * 255.0), 255), 0)
 			texel[(x + (y * TEXTURE_SIZE))*3 + 1] = max(min(int(g * 255.0), 255), 0)
 			texel[(x + (y * TEXTURE_SIZE))*3 + 2] = max(min(int(b * 255.0), 255), 0)
@@ -60,7 +60,7 @@ if __name__ == '__main__':
 	fourfv = ctypes.c_float * 4
 	glLightfv(GL_LIGHT0, GL_POSITION, fourfv(1, 0, 0.5, 0))
 	glLightfv(GL_LIGHT0, GL_AMBIENT, fourfv(0.01, 0.01, 0.01, 1.0))
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, fourfv(3.0, 3.0, 3.0, 1.0))
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, fourfv(1.5, 1.5, 1.5, 1.5))
 	glEnable(GL_COLOR_MATERIAL)
 
 	create_bands_texture()
