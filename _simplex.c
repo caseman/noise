@@ -50,6 +50,24 @@ noise2(float x, float y)
 	return (noise[0] + noise[1] + noise[2]) * 70.0f;
 }
 
+float
+fbmnoise2(float x, float y, int octaves, float persistence)
+{
+    int i;
+    float freq = 1.0f;
+    float amp = 1.0f;
+    float max = 0.0f;
+    float total = 0.0f;
+
+    for (i = 0; i < octaves; i++) {
+        total += noise2(x * freq, y * freq) * amp;
+        max += amp;
+        freq *= 2.0f;
+        amp *= persistence;
+    }
+    return total / max;
+}
+
 static PyObject *
 py_noise2(PyObject *self, PyObject *args, PyObject *kwargs)
 {
@@ -66,23 +84,64 @@ py_noise2(PyObject *self, PyObject *args, PyObject *kwargs)
 		// Single octave, return simple noise
 		return (PyObject *) PyFloat_FromDouble((double) noise2(x, y));
 	} else if (octaves > 1) {
-		int i;
-		float freq = 1.0f;
-		float amp = 1.0f;
-		float max = 0.0f;
-		float total = 0.0f;
-
-		for (i = 0; i < octaves; i++) {
-			total += noise2(x * freq, y * freq) * amp;
-			max += amp;
-			freq *= 2.0f;
-			amp *= persistence;
-		}
-		return (PyObject *) PyFloat_FromDouble((double) (total / max));
+		return (PyObject *) PyFloat_FromDouble((double) fbmnoise2(x, y, octaves, persistence));
 	} else {
 		PyErr_SetString(PyExc_ValueError, "Expected octaves value > 0");
 		return NULL;
 	}
+}
+
+static PyObject *
+py_noise1_fill(PyObject *self, PyObject *args, PyObject *kwargs)
+{
+    PyObject *array;
+    Py_buffer view;
+	int octaves = 1;
+    float scale;
+	float persistence = 0.5f;
+    int fill_float, fill_double, i;
+
+	static char *kwlist[] = {"array", "scale", "octaves", "persistence", NULL};
+	if (!PyArg_ParseTupleAndKeywords(args, kwargs, "Of|if:snoise1_fill", kwlist,
+		&array, &scale, &octaves, &persistence)) {
+		return NULL;
+    }
+    if (!PyObject_CheckBuffer(array)) {
+		PyErr_SetString(PyExc_TypeError, 
+            "Object to fill must support the buffer interface");
+        return NULL;
+    }
+    if (PyObject_GetBuffer(array, &view, 
+        PyBUF_WRITABLE | PyBUF_FORMAT) < 0) {
+        return NULL;
+    }
+
+    fill_float = (strcmp(view.format, "f") == 0);
+    fill_double = (strcmp(view.format, "d") == 0);
+
+    if (view.ndim != 1 || (!fill_float && !fill_double)) {
+		PyErr_SetString(PyExc_TypeError, 
+            "Object to fill must be an array of float or double");
+        goto error;
+    }
+
+    if (fill_float) {
+        float *farray = (float *)view.buf;
+        for (i = 0; i < view.len / sizeof(float); ++i) {
+            farray[i] = fbmnoise2(i * scale, i * scale * 0.91f, octaves, persistence);
+        }
+    } else {
+        double *darray = (double *)view.buf;
+        for (i = 0; i < view.len / sizeof(double); ++i) {
+            darray[i] = fbmnoise2(i * scale, i * scale * 0.91f, octaves, persistence);
+        }
+    }
+
+    PyBuffer_Release(&view);
+    Py_RETURN_NONE;
+error:
+    PyBuffer_Release(&view);
+    return NULL;
 }
 
 #define dot3(v1, v2) ((v1)[0]*(v2)[0] + (v1)[1]*(v2)[1] + (v1)[2]*(v2)[2])
@@ -212,6 +271,7 @@ noise4(float x, float y, float z, float w)
 */
 
 static PyMethodDef simplex_functions[] = {
+	{"noise2_fill", (PyCFunction)py_noise1_fill, METH_VARARGS | METH_KEYWORDS, ""},
 	{"noise2", (PyCFunction)py_noise2, METH_VARARGS | METH_KEYWORDS, 
 		"noise2(x, y, octaves=1, persistence=0.5) return simplex noise value for specified "
 		"coordinate.\n\n"
