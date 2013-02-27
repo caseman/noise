@@ -1,6 +1,8 @@
 // Copyright (c) 2008, Casey Duncan (casey dot duncan at gmail dot com)
 // see LICENSE.txt for details
 
+#include <math.h>
+
 const float GRAD3[][3] = {
 	{1,1,0},{-1,1,0},{1,-1,0},{-1,-1,0}, 
 	{1,0,1},{-1,0,1},{1,0,-1},{-1,0,-1}, 
@@ -44,3 +46,33 @@ const unsigned char PERM[] = {
   180};
 
 #define fastfloor(n) (int)(n) - (((n) < 0.0f) & ((n) != (int)(n)))
+
+// Fast sine/cosine functions from
+// http://devmaster.net/forums/topic/4648-fast-and-accurate-sinecosine/page__st__80
+// Note the input to these functions is not radians
+// instead x = [0, 2] for r = [0, 2*PI]
+
+inline float fast_sin(float x)
+{
+    // Convert the input value to a range of -1 to 1
+    // x = x * (1.0f / PI);
+
+    // Wrap around
+    volatile float z = (x + 25165824.0f);
+    x = x - (z - 25165824.0f);
+
+    #if LOW_SINE_PRECISION
+        return 4.0f * (x - x * fabsf(x));
+    #else
+        float y = x - x * fabsf(x);
+        const float Q = 3.1f;
+        const float P = 3.6f;
+        return y * (Q + P * fabsf(y));
+    #endif
+}
+
+inline float fast_cos(float x)
+{
+    return fast_sin(x + 0.5f);
+}
+
