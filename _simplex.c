@@ -292,6 +292,7 @@ py_noise2(PyObject *self, PyObject *args, PyObject *kwargs)
     } else { // Tiled noise
         float vx = 1.0f, vy = 1.0f, vyz = 0.0f, vxz = 0.0f;
         float xr = x, yr = y, xf, yf;
+        float w = z;
         if (repeaty != FLT_MAX) {
             yf = y * 2.0 / repeaty;
             yr = repeaty * M_1_PI * 0.5;
@@ -306,9 +307,11 @@ py_noise2(PyObject *self, PyObject *args, PyObject *kwargs)
         }
         x = vx * xr;
         y = vy * yr;
-        z += vxz * xr + vyz * yr;
+        z += vxz * xr;
+        w += vyz * yr;
         //printf("%f\n", x*x + y*y + z*z);
-		return (PyObject *) PyFloat_FromDouble((double) fbm_noise3(x, y, z*z, octaves, persistence));
+        return (PyObject *) PyFloat_FromDouble(
+            (double) fbm_noise4(x, y, z, w, octaves, persistence));
     }
 }
 
