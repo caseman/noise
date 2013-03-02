@@ -132,7 +132,6 @@ class SimplexTestCase(unittest.TestCase):
             w = i * 0.21
             for o in range(10):
                 n = snoise4(x, y, z, w, octaves=o + 1)
-                print(n)
                 self.assertTrue(-1.0 <= n <= 1.0, (x, y, z, w, o+1, n))
 
 
