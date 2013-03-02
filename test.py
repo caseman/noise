@@ -113,6 +113,28 @@ class SimplexTestCase(unittest.TestCase):
                 n = snoise3(x, y, z, octaves=o + 1)
                 self.assertTrue(-1.0 <= n <= 1.0, (x, y, z, o+1, n))
 
+    def test_simplex_4d_range(self):
+        from noise import snoise4
+        for i in range(-10000, 10000):
+            x = i * 0.88
+            y = -i * 0.11
+            z = -i * 0.57
+            w = i * 0.666
+            n = snoise4(x, y, z, w)
+            self.assertTrue(-1.0 <= n <= 1.0, (x, y, z, w, n))
+
+    def test_simplex_4d_octaves_range(self):
+        from noise import snoise4
+        for i in range(-1000, 1000):
+            x = -i * 0.12
+            y = i * 0.55
+            z = i * 0.34
+            w = i * 0.21
+            for o in range(10):
+                n = snoise4(x, y, z, w, octaves=o + 1)
+                print(n)
+                self.assertTrue(-1.0 <= n <= 1.0, (x, y, z, w, o+1, n))
+
 
 if __name__ == '__main__':
     unittest.main()

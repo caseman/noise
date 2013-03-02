@@ -7,12 +7,13 @@ fBm capabilities) and Perlin simplex noise. Also contains a fast
 Copyright (c) 2008, Casey Duncan (casey dot duncan at gmail dot com)
 """
 
-__version__ = "1.0b3"
+__version__ = "1.2.0"
 
 from . import _perlin, _simplex
 
 snoise2 = _simplex.noise2
 snoise3 = _simplex.noise3
+snoise4 = _simplex.noise4
 pnoise1 = _perlin.noise1
 pnoise2 = _perlin.noise2
 pnoise3 = _perlin.noise3
