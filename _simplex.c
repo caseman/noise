@@ -127,14 +127,14 @@ noise3(float x, float y, float z)
 }
 
 inline float
-fbm_noise3(float x, float y, float z, int octaves, float persistence) {
+fbm_noise3(float x, float y, float z, int octaves, float persistence, float lacunarity) {
     float freq = 1.0f;
     float amp = 1.0f;
     float max = 1.0f;
     float total = noise3(x, y, z);
 
     for (int i = 1; i < octaves; ++i) {
-        freq *= 2.0f;
+        freq *= lacunarity;
         amp *= persistence;
         max += amp;
         total += noise3(x * freq, y * freq, z * freq) * amp;
@@ -234,14 +234,14 @@ noise4(float x, float y, float z, float w) {
 }
 
 inline float
-fbm_noise4(float x, float y, float z, float w, int octaves, float persistence) {
+fbm_noise4(float x, float y, float z, float w, int octaves, float persistence, float lacunarity) {
     float freq = 1.0f;
     float amp = 1.0f;
     float max = 1.0f;
     float total = noise4(x, y, z, w);
 
     for (int i = 1; i < octaves; ++i) {
-        freq *= 2.0f;
+        freq *= lacunarity;
         amp *= persistence;
         max += amp;
         total += noise4(x * freq, y * freq, z * freq, w * freq) * amp;
@@ -256,13 +256,15 @@ py_noise2(PyObject *self, PyObject *args, PyObject *kwargs)
 	float x, y;
 	int octaves = 1;
 	float persistence = 0.5f;
+    float lacunarity = 2.0f;
     float repeatx = FLT_MAX;
     float repeaty = FLT_MAX;
     float z = 0.0f;
-	static char *kwlist[] = {"x", "y", "octaves", "persistence", "repeatx", "repeaty", "base", NULL};
+	static char *kwlist[] = {"x", "y", "octaves", "persistence", "lacunarity", 
+        "repeatx", "repeaty", "base", NULL};
 
-	if (!PyArg_ParseTupleAndKeywords(args, kwargs, "ff|iffff:snoise2", kwlist,
-		&x, &y, &octaves, &persistence, &repeatx, &repeaty, &z)) {
+	if (!PyArg_ParseTupleAndKeywords(args, kwargs, "ff|ifffff:snoise2", kwlist,
+		&x, &y, &octaves, &persistence, &lacunarity, &repeatx, &repeaty, &z)) {
 		return NULL;
     }
     if (octaves <= 0) {
@@ -278,7 +280,7 @@ py_noise2(PyObject *self, PyObject *args, PyObject *kwargs)
         float total = noise2(x + z, y + z);
 
         for (int i = 1; i < octaves; i++) {
-            freq *= 2.0f;
+            freq *= lacunarity;
             amp *= persistence;
             max += amp;
             total += noise2(x * freq + z, y * freq + z) * amp;
@@ -295,7 +297,7 @@ py_noise2(PyObject *self, PyObject *args, PyObject *kwargs)
             w += vyz * yr;
             if (repeatx == FLT_MAX) {
                 return (PyObject *) PyFloat_FromDouble(
-                    (double) fbm_noise3(x, y, w, octaves, persistence));
+                    (double) fbm_noise3(x, y, w, octaves, persistence, lacunarity));
             }
         }
         if (repeatx != FLT_MAX) {
@@ -307,11 +309,11 @@ py_noise2(PyObject *self, PyObject *args, PyObject *kwargs)
             z += vxz * xr;
             if (repeaty == FLT_MAX) {
                 return (PyObject *) PyFloat_FromDouble(
-                    (double) fbm_noise3(x, y, z, octaves, persistence));
+                    (double) fbm_noise3(x, y, z, octaves, persistence, lacunarity));
             }
         }
         return (PyObject *) PyFloat_FromDouble(
-            (double) fbm_noise4(x, y, z, w, octaves, persistence));
+            (double) fbm_noise4(x, y, z, w, octaves, persistence, lacunarity));
     }
 }
 
@@ -321,18 +323,20 @@ py_noise3(PyObject *self, PyObject *args, PyObject *kwargs)
 	float x, y, z;
 	int octaves = 1;
 	float persistence = 0.5f;
+    float lacunarity = 2.0f;
 
-	static char *kwlist[] = {"x", "y", "z", "octaves", "persistence", NULL};
+	static char *kwlist[] = {"x", "y", "z", "octaves", "persistence", "lacunarity", NULL};
 
-	if (!PyArg_ParseTupleAndKeywords(args, kwargs, "fff|if:snoise3", kwlist,
-		&x, &y, &z, &octaves, &persistence))
+	if (!PyArg_ParseTupleAndKeywords(args, kwargs, "fff|iff:snoise3", kwlist,
+		&x, &y, &z, &octaves, &persistence, &lacunarity))
 		return NULL;
 	
 	if (octaves == 1) {
 		// Single octave, return simple noise
 		return (PyObject *) PyFloat_FromDouble((double) noise3(x, y, z));
 	} else if (octaves > 1) {
-		return (PyObject *) PyFloat_FromDouble((double) fbm_noise3(x, y, z, octaves, persistence));
+		return (PyObject *) PyFloat_FromDouble(
+            (double) fbm_noise3(x, y, z, octaves, persistence, lacunarity));
 	} else {
 		PyErr_SetString(PyExc_ValueError, "Expected octaves value > 0");
 		return NULL;
@@ -345,10 +349,11 @@ py_noise4(PyObject *self, PyObject *args, PyObject *kwargs)
 	float x, y, z, w;
 	int octaves = 1;
 	float persistence = 0.5f;
+    float lacunarity = 2.0f;
 
-	static char *kwlist[] = {"x", "y", "z", "w", "octaves", "persistence", NULL};
+	static char *kwlist[] = {"x", "y", "z", "w", "octaves", "persistence", "lacunarity", NULL};
 
-	if (!PyArg_ParseTupleAndKeywords(args, kwargs, "ffff|if:snoise4", kwlist,
+	if (!PyArg_ParseTupleAndKeywords(args, kwargs, "ffff|iff:snoise4", kwlist,
 		&x, &y, &z, &w, &octaves, &persistence))
 		return NULL;
 	
@@ -356,7 +361,8 @@ py_noise4(PyObject *self, PyObject *args, PyObject *kwargs)
 		// Single octave, return simple noise
 		return (PyObject *) PyFloat_FromDouble((double) noise4(x, y, z, w));
 	} else if (octaves > 1) {
-		return (PyObject *) PyFloat_FromDouble((double) fbm_noise4(x, y, z, w, octaves, persistence));
+		return (PyObject *) PyFloat_FromDouble(
+            (double) fbm_noise4(x, y, z, w, octaves, persistence, lacunarity));
 	} else {
 		PyErr_SetString(PyExc_ValueError, "Expected octaves value > 0");
 		return NULL;
@@ -365,31 +371,37 @@ py_noise4(PyObject *self, PyObject *args, PyObject *kwargs)
 
 static PyMethodDef simplex_functions[] = {
 	{"noise2", (PyCFunction)py_noise2, METH_VARARGS | METH_KEYWORDS, 
-		"noise2(x, y, octaves=1, persistence=0.5, repeatx=None, repeaty=None, base=0.0) "
+		"noise2(x, y, octaves=1, persistence=0.5, lacunarity=2.0, repeatx=None, repeaty=None, base=0.0) "
         "return simplex noise value for specified 2D coordinate.\n\n"
 		"octaves -- specifies the number of passes, defaults to 1 (simple noise).\n\n"
 		"persistence -- specifies the amplitude of each successive octave relative\n"
 		"to the one below it. Defaults to 0.5 (each higher octave's amplitude\n"
-		"is halved). Note the amplitude of the first pass is always 1.0."
+		"is halved). Note the amplitude of the first pass is always 1.0.\n\n"
+        "lacunarity -- specifies the frequency of each successive octave relative\n"
+        "to the one below it, similar to persistence. Defaults to 2.0.\n\n"
         "repeatx, repeaty -- specifies the interval along each axis when \n"
 		"the noise values repeat. This can be used as the tile size for creating \n"
 		"tileable textures\n\n"
-		"base -- specifies a fixed offset for the input coordinates. Useful for\n"
+		"base -- specifies a fixed offset for the noise coordinates. Useful for\n"
 		"generating different noise textures with the same repeat interval"},
 	{"noise3", (PyCFunction)py_noise3, METH_VARARGS | METH_KEYWORDS, 
-		"noise3(x, y, z, octaves=1, persistence=0.5) return simplex noise value for "
+		"noise3(x, y, z, octaves=1, persistence=0.5, lacunarity=2.0) return simplex noise value for "
 		"specified 3D coordinate\n\n"
 		"octaves -- specifies the number of passes, defaults to 1 (simple noise).\n\n"
 		"persistence -- specifies the amplitude of each successive octave relative\n"
 		"to the one below it. Defaults to 0.5 (each higher octave's amplitude\n"
-		"is halved). Note the amplitude of the first pass is always 1.0."},
+		"is halved). Note the amplitude of the first pass is always 1.0.\n\n"
+        "lacunarity -- specifies the frequency of each successive octave relative\n"
+        "to the one below it, similar to persistence. Defaults to 2.0."},
 	{"noise4", (PyCFunction)py_noise4, METH_VARARGS | METH_KEYWORDS, 
-		"noise4(x, y, z, w, octaves=1, persistence=0.5) return simplex noise value for "
+		"noise4(x, y, z, w, octaves=1, persistence=0.5, lacunarity=2.0) return simplex noise value for "
 		"specified 4D coordinate\n\n"
 		"octaves -- specifies the number of passes, defaults to 1 (simple noise).\n\n"
 		"persistence -- specifies the amplitude of each successive octave relative\n"
 		"to the one below it. Defaults to 0.5 (each higher octave's amplitude\n"
-		"is halved). Note the amplitude of the first pass is always 1.0."},
+		"is halved). Note the amplitude of the first pass is always 1.0.\n\n"
+        "lacunarity -- specifies the frequency of each successive octave relative\n"
+        "to the one below it, similar to persistence. Defaults to 2.0."},
 	{NULL}
 };
 
