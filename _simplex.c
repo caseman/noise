@@ -198,11 +198,11 @@ noise4(float x, float y, float z, float w) {
     int J = (int)j & 255;
     int K = (int)k & 255;
     int L = (int)l & 255;
-    int gi0 = PERM[I + PERM[J + PERM[K + PERM[L]]]] % 32;
-    int gi1 = PERM[I + i1 + PERM[J + j1 + PERM[K + k1 + PERM[L + l1]]]] % 32; 
-    int gi2 = PERM[I + i2 + PERM[J + j2 + PERM[K + k2 + PERM[L + l2]]]] % 32; 
-    int gi3 = PERM[I + i3 + PERM[J + j3 + PERM[K + k3 + PERM[L + l3]]]] % 32; 
-    int gi4 = PERM[I + 1 + PERM[J + 1 + PERM[K + 1 + PERM[L + 1]]]] % 32;
+    int gi0 = PERM[I + PERM[J + PERM[K + PERM[L]]]] & 0x1f;
+    int gi1 = PERM[I + i1 + PERM[J + j1 + PERM[K + k1 + PERM[L + l1]]]] & 0x1f; 
+    int gi2 = PERM[I + i2 + PERM[J + j2 + PERM[K + k2 + PERM[L + l2]]]] & 0x1f; 
+    int gi3 = PERM[I + i3 + PERM[J + j3 + PERM[K + k3 + PERM[L + l3]]]] & 0x1f; 
+    int gi4 = PERM[I + 1 + PERM[J + 1 + PERM[K + 1 + PERM[L + 1]]]] & 0x1f;
 
     float t0 = 0.6f - x0*x0 - y0*y0 - z0*z0 - w0*w0;
     if (t0 >= 0.0f) {
@@ -265,51 +265,51 @@ py_noise2(PyObject *self, PyObject *args, PyObject *kwargs)
 		&x, &y, &octaves, &persistence, &repeatx, &repeaty, &z)) {
 		return NULL;
     }
+    if (octaves <= 0) {
+        PyErr_SetString(PyExc_ValueError, "Expected octaves value > 0");
+        return NULL;
+    }
 	
-    if (repeatx == FLT_MAX && repeaty == FLT_MAX && z == 0.0f) {
+    if (repeatx == FLT_MAX && repeaty == FLT_MAX) {
         // Flat noise, no tiling
-        if (octaves == 1) {
-            // Single octave, return simple noise
-            return (PyObject *) PyFloat_FromDouble((double) noise2(x, y));
-        } else if (octaves > 1) {
-            int i;
-            float freq = 1.0f;
-            float amp = 1.0f;
-            float max = 0.0f;
-            float total = 0.0f;
+        float freq = 1.0f;
+        float amp = 1.0f;
+        float max = 1.0f;
+        float total = noise2(x + z, y + z);
 
-            for (i = 0; i < octaves; i++) {
-                total += noise2(x * freq, y * freq) * amp;
-                max += amp;
-                freq *= 2.0f;
-                amp *= persistence;
-            }
-            return (PyObject *) PyFloat_FromDouble((double) (total / max));
-        } else {
-            PyErr_SetString(PyExc_ValueError, "Expected octaves value > 0");
-            return NULL;
+        for (int i = 1; i < octaves; i++) {
+            freq *= 2.0f;
+            amp *= persistence;
+            max += amp;
+            total += noise2(x * freq + z, y * freq + z) * amp;
         }
+        return (PyObject *) PyFloat_FromDouble((double) (total / max));
     } else { // Tiled noise
-        float vx = 1.0f, vy = 1.0f, vyz = 0.0f, vxz = 0.0f;
-        float xr = x, yr = y, xf, yf;
         float w = z;
         if (repeaty != FLT_MAX) {
-            yf = y * 2.0 / repeaty;
-            yr = repeaty * M_1_PI * 0.5;
-            vy = fast_sin(yf);
-            vyz = fast_cos(yf);
+            float yf = y * 2.0 / repeaty;
+            float yr = repeaty * M_1_PI * 0.5;
+            float vy = fast_sin(yf);
+            float vyz = fast_cos(yf);
+            y = vy * yr;
+            w += vyz * yr;
+            if (repeatx == FLT_MAX) {
+                return (PyObject *) PyFloat_FromDouble(
+                    (double) fbm_noise3(x, y, w, octaves, persistence));
+            }
         }
         if (repeatx != FLT_MAX) {
-            xf = x * 2.0 / repeatx;
-            xr = repeatx * M_1_PI * 0.5;
-            vx = fast_sin(xf);
-            vxz = fast_cos(xf);
+            float xf = x * 2.0 / repeatx;
+            float xr = repeatx * M_1_PI * 0.5;
+            float vx = fast_sin(xf);
+            float vxz = fast_cos(xf);
+            x = vx * xr;
+            z += vxz * xr;
+            if (repeaty == FLT_MAX) {
+                return (PyObject *) PyFloat_FromDouble(
+                    (double) fbm_noise3(x, y, z, octaves, persistence));
+            }
         }
-        x = vx * xr;
-        y = vy * yr;
-        z += vxz * xr;
-        w += vyz * yr;
-        //printf("%f\n", x*x + y*y + z*z);
         return (PyObject *) PyFloat_FromDouble(
             (double) fbm_noise4(x, y, z, w, octaves, persistence));
     }
