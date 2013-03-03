@@ -43,13 +43,14 @@ py_noise1(PyObject *self, PyObject *args, PyObject *kwargs)
 	float x;
 	int octaves = 1;
 	float persistence = 0.5f;
+    float lacunarity = 2.0f;
 	int repeat = 1024; // arbitrary
 	int base = 0;
 
-	static char *kwlist[] = {"x", "octaves", "persistence", "repeat", "base", NULL};
+	static char *kwlist[] = {"x", "octaves", "persistence", "lacunarity", "repeat", "base", NULL};
 
-	if (!PyArg_ParseTupleAndKeywords(args, kwargs, "f|ifii:noise1", kwlist,
-		&x, &octaves, &persistence, &repeat, &base))
+	if (!PyArg_ParseTupleAndKeywords(args, kwargs, "f|iffii:noise1", kwlist,
+		&x, &octaves, &persistence, &lacunarity, &repeat, &base))
 		return NULL;
 	
 	if (octaves == 1) {
@@ -65,7 +66,7 @@ py_noise1(PyObject *self, PyObject *args, PyObject *kwargs)
 		for (i = 0; i < octaves; i++) {
 			total += noise1(x * freq, (const int)(repeat * freq), base) * amp;
 			max += amp;
-			freq *= 2.0f;
+			freq *= lacunarity;
 			amp *= persistence;
 		}
 		return (PyObject *) PyFloat_FromDouble((double) (total / max));
@@ -119,14 +120,15 @@ py_noise2(PyObject *self, PyObject *args, PyObject *kwargs)
 	float x, y;
 	int octaves = 1;
 	float persistence = 0.5f;
+    float lacunarity = 2.0f;
 	float repeatx = 1024; // arbitrary
 	float repeaty = 1024; // arbitrary
 	int base = 0;
 
-	static char *kwlist[] = {"x", "y", "octaves", "persistence", "repeatx", "repeaty", "base", NULL};
+	static char *kwlist[] = {"x", "y", "octaves", "persistence", "lacunarity", "repeatx", "repeaty", "base", NULL};
 
-	if (!PyArg_ParseTupleAndKeywords(args, kwargs, "ff|ifffi:noise2", kwlist,
-		&x, &y, &octaves, &persistence, &repeatx, &repeaty, &base))
+	if (!PyArg_ParseTupleAndKeywords(args, kwargs, "ff|iffffi:noise2", kwlist,
+		&x, &y, &octaves, &persistence, &lacunarity, &repeatx, &repeaty, &base))
 		return NULL;
 	
 	if (octaves == 1) {
@@ -142,7 +144,7 @@ py_noise2(PyObject *self, PyObject *args, PyObject *kwargs)
 		for (i = 0; i < octaves; i++) {
 			total += noise2(x * freq, y * freq, repeatx * freq, repeaty * freq, base) * amp;
 			max += amp;
-			freq *= 2.0f;
+			freq *= lacunarity;
 			amp *= persistence;
 		}
 		return (PyObject *) PyFloat_FromDouble((double) (total / max));
@@ -206,16 +208,17 @@ py_noise3(PyObject *self, PyObject *args, PyObject *kwargs)
 	float x, y, z;
 	int octaves = 1;
 	float persistence = 0.5f;
+    float lacunarity = 2.0f;
 	int repeatx = 1024; // arbitrary
 	int repeaty = 1024; // arbitrary
 	int repeatz = 1024; // arbitrary
 	int base = 0;
 
-	static char *kwlist[] = {"x", "y", "z", "octaves", "persistence", 
+	static char *kwlist[] = {"x", "y", "z", "octaves", "persistence", "lacunarity",
 		"repeatx", "repeaty", "repeatz", "base", NULL};
 
-	if (!PyArg_ParseTupleAndKeywords(args, kwargs, "fff|ifiiii:noise3", kwlist,
-		&x, &y, &z, &octaves, &persistence, &repeatx, &repeaty, &repeatz, &base))
+	if (!PyArg_ParseTupleAndKeywords(args, kwargs, "fff|iffiiii:noise3", kwlist,
+		&x, &y, &z, &octaves, &persistence, &lacunarity, &repeatx, &repeaty, &repeatz, &base))
 		return NULL;
 	
 	if (octaves == 1) {
@@ -233,7 +236,7 @@ py_noise3(PyObject *self, PyObject *args, PyObject *kwargs)
 			total += noise3(x * freq, y * freq, z * freq, 
 				(const int)(repeatx*freq), (const int)(repeaty*freq), (const int)(repeatz*freq), base) * amp;
 			max += amp;
-			freq *= 2.0f;
+			freq *= lacunarity;
 			amp *= persistence;
 		}
 		return (PyObject *) PyFloat_FromDouble((double) (total / max));
@@ -245,13 +248,13 @@ py_noise3(PyObject *self, PyObject *args, PyObject *kwargs)
 
 static PyMethodDef perlin_functions[] = {
 	{"noise1", (PyCFunction) py_noise1, METH_VARARGS | METH_KEYWORDS, 
-		"noise1(x, octaves=1, persistence=0.5, repeat=1024, base=0.0)\n\n"
+		"noise1(x, octaves=1, persistence=0.5, lacunarity=2.0, repeat=1024, base=0.0)\n\n"
 		"1 dimensional perlin improved noise function (see noise3 for more info)"},
 	{"noise2", (PyCFunction) py_noise2, METH_VARARGS | METH_KEYWORDS, 
-		"noise2(x, y, octaves=1, persistence=0.5, repeatx=1024, repeaty=1024, base=0.0)\n\n"
+		"noise2(x, y, octaves=1, persistence=0.5, lacunarity=2.0, repeatx=1024, repeaty=1024, base=0.0)\n\n"
 		"2 dimensional perlin improved noise function (see noise3 for more info)"},
 	{"noise3", (PyCFunction) py_noise3, METH_VARARGS | METH_KEYWORDS, 
-		"noise3(x, y, z, octaves=1, persistence=0.5, "
+		"noise3(x, y, z, octaves=1, persistence=0.5, lacunarity=2.0"
 			"repeatx=1024, repeaty=1024, repeatz=1024, base=0.0)\n\n"
 		"return perlin \"improved\" noise value for specified coordinate\n\n"
 		"octaves -- specifies the number of passes for generating fBm noise,\n"
@@ -259,6 +262,8 @@ static PyMethodDef perlin_functions[] = {
 		"persistence -- specifies the amplitude of each successive octave relative\n"
 		"to the one below it. Defaults to 0.5 (each higher octave's amplitude\n"
 		"is halved). Note the amplitude of the first pass is always 1.0.\n\n"
+        "lacunarity -- specifies the frequency of each successive octave relative\n"
+        "to the one below it, similar to persistence. Defaults to 2.0.\n\n"
 		"repeatx, repeaty, repeatz -- specifies the interval along each axis when \n"
 		"the noise values repeat. This can be used as the tile size for creating \n"
 		"tileable textures\n\n"
