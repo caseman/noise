@@ -1,3 +1,11 @@
+1.2.0 -- Mar 3, 2013
+
+  - Add lacunarity parameter for perlin and simplex functions
+
+  - Add 4D simplex noise
+
+  - 2D simplex noise can now be tiled seamlessly
+
 1.1.1 -- Feb 14, 2013
 
   - Fixed artifact in 3D simplex noise output
