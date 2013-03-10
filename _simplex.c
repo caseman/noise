@@ -132,8 +132,9 @@ fbm_noise3(float x, float y, float z, int octaves, float persistence, float lacu
     float amp = 1.0f;
     float max = 1.0f;
     float total = noise3(x, y, z);
+    int i;
 
-    for (int i = 1; i < octaves; ++i) {
+    for (i = 1; i < octaves; ++i) {
         freq *= lacunarity;
         amp *= persistence;
         max += amp;
@@ -203,28 +204,29 @@ noise4(float x, float y, float z, float w) {
     int gi2 = PERM[I + i2 + PERM[J + j2 + PERM[K + k2 + PERM[L + l2]]]] & 0x1f; 
     int gi3 = PERM[I + i3 + PERM[J + j3 + PERM[K + k3 + PERM[L + l3]]]] & 0x1f; 
     int gi4 = PERM[I + 1 + PERM[J + 1 + PERM[K + 1 + PERM[L + 1]]]] & 0x1f;
+    float t0, t1, t2, t3, t4;
 
-    float t0 = 0.6f - x0*x0 - y0*y0 - z0*z0 - w0*w0;
+    t0 = 0.6f - x0*x0 - y0*y0 - z0*z0 - w0*w0;
     if (t0 >= 0.0f) {
         t0 *= t0;
         noise[0] = t0 * t0 * dot4(GRAD4[gi0], x0, y0, z0, w0);
     }
-    float t1 = 0.6f - x1*x1 - y1*y1 - z1*z1 - w1*w1;
+    t1 = 0.6f - x1*x1 - y1*y1 - z1*z1 - w1*w1;
     if (t1 >= 0.0f) {
         t1 *= t1;
         noise[1] = t1 * t1 * dot4(GRAD4[gi1], x1, y1, z1, w1);
     }
-    float t2 = 0.6f - x2*x2 - y2*y2 - z2*z2 - w2*w2;
+    t2 = 0.6f - x2*x2 - y2*y2 - z2*z2 - w2*w2;
     if (t2 >= 0.0f) {
         t2 *= t2;
         noise[2] = t2 * t2 * dot4(GRAD4[gi2], x2, y2, z2, w2);
     }
-    float t3 = 0.6f - x3*x3 - y3*y3 - z3*z3 - w3*w3;
+    t3 = 0.6f - x3*x3 - y3*y3 - z3*z3 - w3*w3;
     if (t3 >= 0.0f) {
         t3 *= t3;
         noise[3] = t3 * t3 * dot4(GRAD4[gi3], x3, y3, z3, w3);
     }
-    float t4 = 0.6f - x4*x4 - y4*y4 - z4*z4 - w4*w4;
+    t4 = 0.6f - x4*x4 - y4*y4 - z4*z4 - w4*w4;
     if (t4 >= 0.0f) {
         t4 *= t4;
         noise[4] = t4 * t4 * dot4(GRAD4[gi4], x4, y4, z4, w4);
@@ -239,8 +241,9 @@ fbm_noise4(float x, float y, float z, float w, int octaves, float persistence, f
     float amp = 1.0f;
     float max = 1.0f;
     float total = noise4(x, y, z, w);
+    int i;
 
-    for (int i = 1; i < octaves; ++i) {
+    for (i = 1; i < octaves; ++i) {
         freq *= lacunarity;
         amp *= persistence;
         max += amp;
@@ -278,8 +281,9 @@ py_noise2(PyObject *self, PyObject *args, PyObject *kwargs)
         float amp = 1.0f;
         float max = 1.0f;
         float total = noise2(x + z, y + z);
+        int i;
 
-        for (int i = 1; i < octaves; i++) {
+        for (i = 1; i < octaves; i++) {
             freq *= lacunarity;
             amp *= persistence;
             max += amp;
