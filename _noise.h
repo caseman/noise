@@ -3,6 +3,11 @@
 
 #include <math.h>
 
+#if defined(_MSC_VER)
+#define inline _inline
+#define M_1_PI 0.31830988618379067154
+#endif
+
 const float GRAD3[][3] = {
 	{1,1,0},{-1,1,0},{1,-1,0},{-1,-1,0}, 
 	{1,0,1},{-1,0,1},{1,0,-1},{-1,0,-1}, 
@@ -86,10 +91,12 @@ inline float fast_sin(float x)
     #if LOW_SINE_PRECISION
         return 4.0f * (x - x * fabsf(x));
     #else
+    {
         float y = x - x * fabsf(x);
         const float Q = 3.1f;
         const float P = 3.6f;
         return y * (Q + P * fabsf(y));
+    }
     #endif
 }
 
