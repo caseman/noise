@@ -11,7 +11,7 @@ else:
 
 setup(
 	name='noise',
-    version='1.1.1',
+    version='1.2.0',
 	description='Perlin noise for Python',
 	long_description='''\
 Perlin noise is ubiquitous in modern CGI. Used for procedural texturing,
@@ -29,8 +29,8 @@ The Perlin improved noise functions can also generate fBm (fractal Brownian
 motion) noise by combining multiple octaves of Perlin noise. Shader functions
 for convenient generation of turbulent noise are also included.
 
-1.1.0 Adds support for Python 3, and fixes several long-standing bugs
-1.1.1 Fixes an artifact in 3D simplex noise output, and fixes the shaders on python 3.
+- 1.2.0 adds 4D simplex noise, tiling for 2D simplex noise, 
+  and parameterized lacunarity
 
 See CHANGES.txt for more details
 ''',
