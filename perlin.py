@@ -86,7 +86,7 @@ class BaseNoise:
 		prove useful, they will not be "pure" simplex noise. The largest
 		element in the sequence must be no larger than period-1.
 
-		period and permutation_table may not be specified togther.
+		period and permutation_table may not be specified together.
 		"""
 		if period is not None and permutation_table is not None:
 			raise ValueError(
