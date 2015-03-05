@@ -53,7 +53,7 @@ install:
 build: off
 
 test_script:
-  - "SET PYTHONPATH=%PYTHONPATH%;."
+  - "%WITH_COMPILER% %PYTHON%/python setup.py install"
   - "%WITH_COMPILER% %PYTHON%/python test.py"
 
 after_test:
