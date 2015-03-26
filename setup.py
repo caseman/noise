@@ -7,16 +7,16 @@ except ImportError:
     from distutils.core import setup, Extension
 
 if sys.platform != 'win32':
-	compile_args = ['-funroll-loops']
+    compile_args = ['-funroll-loops']
 else:
-	# XXX insert win32 flag to unroll loops here
-	compile_args = []
+    # XXX insert win32 flag to unroll loops here
+    compile_args = []
 
 setup(
-	name='noise',
+    name='noise',
     version='1.2.1',
-	description='Perlin noise for Python',
-	long_description='''\
+    description='Perlin noise for Python',
+    long_description='''\
 Perlin noise is ubiquitous in modern CGI. Used for procedural texturing,
 animation, and enhancing realism, Perlin noise has been called the "salt" of
 procedural content. Perlin noise is a type of gradient noise, smoothly
@@ -39,9 +39,9 @@ for convenient generation of turbulent noise are also included.
 
 See CHANGES.txt for more details
 ''',
-	author='Casey Duncan',
-	author_email='casey.duncan@gmail.com',
-	url='https://github.com/caseman/noise',
+    author='Casey Duncan',
+    author_email='casey.duncan@gmail.com',
+    url='https://github.com/caseman/noise',
     classifiers = [
         'Development Status :: 4 - Beta',
         'Topic :: Multimedia :: Graphics',
@@ -56,12 +56,12 @@ See CHANGES.txt for more details
 
     package_dir={'noise': ''},
     packages=['noise'],
-	ext_modules=[
-		Extension('noise._simplex', ['_simplex.c'], 
-			extra_compile_args=compile_args,
-		),
-		Extension('noise._perlin', ['_perlin.c'],
-			extra_compile_args=compile_args,
-		)
-	],
+    ext_modules=[
+        Extension('noise._simplex', ['_simplex.c'], 
+            extra_compile_args=compile_args,
+        ),
+        Extension('noise._perlin', ['_perlin.c'],
+            extra_compile_args=compile_args,
+        )
+    ],
 )
