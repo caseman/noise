@@ -1,7 +1,7 @@
 # $Id: setup.py 532 2009-01-29 04:32:33Z casey.duncan $
 
 import sys
-from distutils.core import setup, Extension
+from setuptools import setup, Extension
 
 if sys.platform != 'win32':
 	compile_args = ['-funroll-loops']
