@@ -60,13 +60,15 @@ class BaseNoise:
 		251,34,242,193,238,210,144,12,191,179,162,241, 81,51,145,235,249,14,239,107, 
 		49,192,214,31,181,199,106,157,184,84,204,176,115,121,50,45,127,4,150,254, 
 		138,236,205,93,222,114,67,29,24,72,243,141,128,195,78,66,215,61,156,180)
-	
+
 	period = len(permutation)
 
 	# Double permutation array so we don't need to wrap
 	permutation = permutation * 2
 
-	def __init__(self, period=None, permutation_table=None):
+	randint_function = randint
+
+	def __init__(self, period=None, permutation_table=None, randint_function=None):
 		"""Initialize the noise generator. With no arguments, the default
 		period and permutation table are used (256). The default permutation
 		table generates the exact same noise pattern each time.
@@ -87,7 +89,18 @@ class BaseNoise:
 		element in the sequence must be no larger than period-1.
 
 		period and permutation_table may not be specified together.
+
+		A substitute for the method random.randint(a, b) can be chosen. The
+		method must take two integer parameters a and b and return an integer N
+		such that a <= N <= b.
 		"""
+		if randint_function is not None:  # do this before calling randomize()
+			if not hasattr(randint_function, '__call__'):
+				raise TypeError(
+					'randint_function has to be a function')
+			self.randint_function = randint_function
+			if period is None:
+				period = self.period  # enforce actually calling randomize()
 		if period is not None and permutation_table is not None:
 			raise ValueError(
 				'Can specify either period or permutation_table, not both')
@@ -106,7 +119,7 @@ class BaseNoise:
 		perm = list(range(self.period))
 		perm_right = self.period - 1
 		for i in list(perm):
-			j = randint(0, perm_right)
+			j = self.randint_function(0, perm_right)
 			perm[i], perm[j] = perm[j], perm[i]
 		self.permutation = tuple(perm) * 2
 
