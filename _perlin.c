@@ -254,7 +254,7 @@ static PyMethodDef perlin_functions[] = {
 		"noise2(x, y, octaves=1, persistence=0.5, lacunarity=2.0, repeatx=1024, repeaty=1024, base=0.0)\n\n"
 		"2 dimensional perlin improved noise function (see noise3 for more info)"},
 	{"noise3", (PyCFunction) py_noise3, METH_VARARGS | METH_KEYWORDS, 
-		"noise3(x, y, z, octaves=1, persistence=0.5, lacunarity=2.0"
+		"noise3(x, y, z, octaves=1, persistence=0.5, lacunarity=2.0, "
 			"repeatx=1024, repeaty=1024, repeatz=1024, base=0.0)\n\n"
 		"return perlin \"improved\" noise value for specified coordinate\n\n"
 		"octaves -- specifies the number of passes for generating fBm noise,\n"
