@@ -1,6 +1,7 @@
+// -*- mode: c; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4; -*-
+//
 // Copyright (c) 2008, Casey Duncan (casey dot duncan at gmail dot com)
 // see LICENSE.txt for details
-// $Id$
 
 #include "Python.h"
 #include <math.h>
@@ -14,41 +15,41 @@
 float 
 noise2(float x, float y) 
 {
-	int i1, j1, I, J, c;
-	float s = (x + y) * F2;
-	float i = floorf(x + s);
-	float j = floorf(y + s);
-	float t = (i + j) * G2;
+    int i1, j1, I, J, c;
+    float s = (x + y) * F2;
+    float i = floorf(x + s);
+    float j = floorf(y + s);
+    float t = (i + j) * G2;
 
-	float xx[3], yy[3], f[3];
-	float noise[3] = {0.0f, 0.0f, 0.0f};
-	int g[3];
+    float xx[3], yy[3], f[3];
+    float noise[3] = {0.0f, 0.0f, 0.0f};
+    int g[3];
 
-	xx[0] = x - (i - t);
-	yy[0] = y - (j - t);
+    xx[0] = x - (i - t);
+    yy[0] = y - (j - t);
 
-	i1 = xx[0] > yy[0];
-	j1 = xx[0] <= yy[0];
+    i1 = xx[0] > yy[0];
+    j1 = xx[0] <= yy[0];
 
-	xx[2] = xx[0] + G2 * 2.0f - 1.0f;
-	yy[2] = yy[0] + G2 * 2.0f - 1.0f;
-	xx[1] = xx[0] - i1 + G2;
-	yy[1] = yy[0] - j1 + G2;
+    xx[2] = xx[0] + G2 * 2.0f - 1.0f;
+    yy[2] = yy[0] + G2 * 2.0f - 1.0f;
+    xx[1] = xx[0] - i1 + G2;
+    yy[1] = yy[0] - j1 + G2;
 
-	I = (int) i & 255;
-	J = (int) j & 255;
-	g[0] = PERM[I + PERM[J]] % 12;
-	g[1] = PERM[I + i1 + PERM[J + j1]] % 12;
-	g[2] = PERM[I + 1 + PERM[J + 1]] % 12;
+    I = (int) i & 255;
+    J = (int) j & 255;
+    g[0] = PERM[I + PERM[J]] % 12;
+    g[1] = PERM[I + i1 + PERM[J + j1]] % 12;
+    g[2] = PERM[I + 1 + PERM[J + 1]] % 12;
 
-	for (c = 0; c <= 2; c++)
-		f[c] = 0.5f - xx[c]*xx[c] - yy[c]*yy[c];
-	
-	for (c = 0; c <= 2; c++)
-		if (f[c] > 0)
-			noise[c] = f[c]*f[c]*f[c]*f[c] * (GRAD3[g[c]][0]*xx[c] + GRAD3[g[c]][1]*yy[c]);
-	
-	return (noise[0] + noise[1] + noise[2]) * 70.0f;
+    for (c = 0; c <= 2; c++)
+        f[c] = 0.5f - xx[c]*xx[c] - yy[c]*yy[c];
+    
+    for (c = 0; c <= 2; c++)
+        if (f[c] > 0)
+            noise[c] = f[c]*f[c]*f[c]*f[c] * (GRAD3[g[c]][0]*xx[c] + GRAD3[g[c]][1]*yy[c]);
+    
+    return (noise[0] + noise[1] + noise[2]) * 70.0f;
 }
 
 #define dot3(v1, v2) ((v1)[0]*(v2)[0] + (v1)[1]*(v2)[1] + (v1)[2]*(v2)[2])
@@ -61,69 +62,69 @@ noise2(float x, float y)
 float 
 noise3(float x, float y, float z) 
 {
-	int c, o1[3], o2[3], g[4], I, J, K;
-	float f[4], noise[4] = {0.0f, 0.0f, 0.0f, 0.0f};
-	float s = (x + y + z) * F3;
-	float i = floorf(x + s);
-	float j = floorf(y + s);
-	float k = floorf(z + s);
-	float t = (i + j + k) * G3;
+    int c, o1[3], o2[3], g[4], I, J, K;
+    float f[4], noise[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+    float s = (x + y + z) * F3;
+    float i = floorf(x + s);
+    float j = floorf(y + s);
+    float k = floorf(z + s);
+    float t = (i + j + k) * G3;
 
-	float pos[4][3];
+    float pos[4][3];
 
-	pos[0][0] = x - (i - t);
-	pos[0][1] = y - (j - t);
-	pos[0][2] = z - (k - t);
+    pos[0][0] = x - (i - t);
+    pos[0][1] = y - (j - t);
+    pos[0][2] = z - (k - t);
 
-	if (pos[0][0] >= pos[0][1]) {
-		if (pos[0][1] >= pos[0][2]) {
-			ASSIGN(o1, 1, 0, 0);
-			ASSIGN(o2, 1, 1, 0);
-		} else if (pos[0][0] >= pos[0][2]) {
-			ASSIGN(o1, 1, 0, 0);
-			ASSIGN(o2, 1, 0, 1);
-		} else {
-			ASSIGN(o1, 0, 0, 1);
-			ASSIGN(o2, 1, 0, 1);
-		}
-	} else {
-		if (pos[0][1] < pos[0][2]) {
-			ASSIGN(o1, 0, 0, 1);
-			ASSIGN(o2, 0, 1, 1);
-		} else if (pos[0][0] < pos[0][2]) {
-			ASSIGN(o1, 0, 1, 0);
-			ASSIGN(o2, 0, 1, 1);
-		} else {
-			ASSIGN(o1, 0, 1, 0);
-			ASSIGN(o2, 1, 1, 0);
-		}
-	}
-	
-	for (c = 0; c <= 2; c++) {
-		pos[3][c] = pos[0][c] - 1.0f + 3.0f * G3;
-		pos[2][c] = pos[0][c] - o2[c] + 2.0f * G3;
-		pos[1][c] = pos[0][c] - o1[c] + G3;
-	}
+    if (pos[0][0] >= pos[0][1]) {
+        if (pos[0][1] >= pos[0][2]) {
+            ASSIGN(o1, 1, 0, 0);
+            ASSIGN(o2, 1, 1, 0);
+        } else if (pos[0][0] >= pos[0][2]) {
+            ASSIGN(o1, 1, 0, 0);
+            ASSIGN(o2, 1, 0, 1);
+        } else {
+            ASSIGN(o1, 0, 0, 1);
+            ASSIGN(o2, 1, 0, 1);
+        }
+    } else {
+        if (pos[0][1] < pos[0][2]) {
+            ASSIGN(o1, 0, 0, 1);
+            ASSIGN(o2, 0, 1, 1);
+        } else if (pos[0][0] < pos[0][2]) {
+            ASSIGN(o1, 0, 1, 0);
+            ASSIGN(o2, 0, 1, 1);
+        } else {
+            ASSIGN(o1, 0, 1, 0);
+            ASSIGN(o2, 1, 1, 0);
+        }
+    }
+    
+    for (c = 0; c <= 2; c++) {
+        pos[3][c] = pos[0][c] - 1.0f + 3.0f * G3;
+        pos[2][c] = pos[0][c] - o2[c] + 2.0f * G3;
+        pos[1][c] = pos[0][c] - o1[c] + G3;
+    }
 
-	I = (int) i & 255; 
-	J = (int) j & 255; 
-	K = (int) k & 255;
-	g[0] = PERM[I + PERM[J + PERM[K]]] % 12;
-	g[1] = PERM[I + o1[0] + PERM[J + o1[1] + PERM[o1[2] + K]]] % 12;
-	g[2] = PERM[I + o2[0] + PERM[J + o2[1] + PERM[o2[2] + K]]] % 12;
-	g[3] = PERM[I + 1 + PERM[J + 1 + PERM[K + 1]]] % 12; 
+    I = (int) i & 255; 
+    J = (int) j & 255; 
+    K = (int) k & 255;
+    g[0] = PERM[I + PERM[J + PERM[K]]] % 12;
+    g[1] = PERM[I + o1[0] + PERM[J + o1[1] + PERM[o1[2] + K]]] % 12;
+    g[2] = PERM[I + o2[0] + PERM[J + o2[1] + PERM[o2[2] + K]]] % 12;
+    g[3] = PERM[I + 1 + PERM[J + 1 + PERM[K + 1]]] % 12; 
 
-	for (c = 0; c <= 3; c++) {
-		f[c] = 0.6f - pos[c][0]*pos[c][0] - pos[c][1]*pos[c][1] - pos[c][2]*pos[c][2];
-	}
-	
-	for (c = 0; c <= 3; c++) {
-		if (f[c] > 0) {
-			noise[c] = f[c]*f[c]*f[c]*f[c] * dot3(pos[c], GRAD3[g[c]]);
-		}
-	}
-	
-	return (noise[0] + noise[1] + noise[2] + noise[3]) * 32.0f;
+    for (c = 0; c <= 3; c++) {
+        f[c] = 0.6f - pos[c][0]*pos[c][0] - pos[c][1]*pos[c][1] - pos[c][2]*pos[c][2];
+    }
+    
+    for (c = 0; c <= 3; c++) {
+        if (f[c] > 0) {
+            noise[c] = f[c]*f[c]*f[c]*f[c] * dot3(pos[c], GRAD3[g[c]]);
+        }
+    }
+    
+    return (noise[0] + noise[1] + noise[2] + noise[3]) * 32.0f;
 }
 
 inline float
@@ -256,25 +257,25 @@ fbm_noise4(float x, float y, float z, float w, int octaves, float persistence, f
 static PyObject *
 py_noise2(PyObject *self, PyObject *args, PyObject *kwargs)
 {
-	float x, y;
-	int octaves = 1;
-	float persistence = 0.5f;
+    float x, y;
+    int octaves = 1;
+    float persistence = 0.5f;
     float lacunarity = 2.0f;
     float repeatx = FLT_MAX;
     float repeaty = FLT_MAX;
     float z = 0.0f;
-	static char *kwlist[] = {"x", "y", "octaves", "persistence", "lacunarity", 
+    static char *kwlist[] = {"x", "y", "octaves", "persistence", "lacunarity", 
         "repeatx", "repeaty", "base", NULL};
 
-	if (!PyArg_ParseTupleAndKeywords(args, kwargs, "ff|ifffff:snoise2", kwlist,
-		&x, &y, &octaves, &persistence, &lacunarity, &repeatx, &repeaty, &z)) {
-		return NULL;
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "ff|ifffff:snoise2", kwlist,
+        &x, &y, &octaves, &persistence, &lacunarity, &repeatx, &repeaty, &z)) {
+        return NULL;
     }
     if (octaves <= 0) {
         PyErr_SetString(PyExc_ValueError, "Expected octaves value > 0");
         return NULL;
     }
-	
+    
     if (repeatx == FLT_MAX && repeaty == FLT_MAX) {
         // Flat noise, no tiling
         float freq = 1.0f;
@@ -324,89 +325,89 @@ py_noise2(PyObject *self, PyObject *args, PyObject *kwargs)
 static PyObject *
 py_noise3(PyObject *self, PyObject *args, PyObject *kwargs)
 {
-	float x, y, z;
-	int octaves = 1;
-	float persistence = 0.5f;
+    float x, y, z;
+    int octaves = 1;
+    float persistence = 0.5f;
     float lacunarity = 2.0f;
 
-	static char *kwlist[] = {"x", "y", "z", "octaves", "persistence", "lacunarity", NULL};
+    static char *kwlist[] = {"x", "y", "z", "octaves", "persistence", "lacunarity", NULL};
 
-	if (!PyArg_ParseTupleAndKeywords(args, kwargs, "fff|iff:snoise3", kwlist,
-		&x, &y, &z, &octaves, &persistence, &lacunarity))
-		return NULL;
-	
-	if (octaves == 1) {
-		// Single octave, return simple noise
-		return (PyObject *) PyFloat_FromDouble((double) noise3(x, y, z));
-	} else if (octaves > 1) {
-		return (PyObject *) PyFloat_FromDouble(
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "fff|iff:snoise3", kwlist,
+        &x, &y, &z, &octaves, &persistence, &lacunarity))
+        return NULL;
+    
+    if (octaves == 1) {
+        // Single octave, return simple noise
+        return (PyObject *) PyFloat_FromDouble((double) noise3(x, y, z));
+    } else if (octaves > 1) {
+        return (PyObject *) PyFloat_FromDouble(
             (double) fbm_noise3(x, y, z, octaves, persistence, lacunarity));
-	} else {
-		PyErr_SetString(PyExc_ValueError, "Expected octaves value > 0");
-		return NULL;
-	}
+    } else {
+        PyErr_SetString(PyExc_ValueError, "Expected octaves value > 0");
+        return NULL;
+    }
 }
 
 static PyObject *
 py_noise4(PyObject *self, PyObject *args, PyObject *kwargs)
 {
-	float x, y, z, w;
-	int octaves = 1;
-	float persistence = 0.5f;
+    float x, y, z, w;
+    int octaves = 1;
+    float persistence = 0.5f;
     float lacunarity = 2.0f;
 
-	static char *kwlist[] = {"x", "y", "z", "w", "octaves", "persistence", "lacunarity", NULL};
+    static char *kwlist[] = {"x", "y", "z", "w", "octaves", "persistence", "lacunarity", NULL};
 
-	if (!PyArg_ParseTupleAndKeywords(args, kwargs, "ffff|iff:snoise4", kwlist,
-		&x, &y, &z, &w, &octaves, &persistence))
-		return NULL;
-	
-	if (octaves == 1) {
-		// Single octave, return simple noise
-		return (PyObject *) PyFloat_FromDouble((double) noise4(x, y, z, w));
-	} else if (octaves > 1) {
-		return (PyObject *) PyFloat_FromDouble(
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "ffff|iff:snoise4", kwlist,
+        &x, &y, &z, &w, &octaves, &persistence))
+        return NULL;
+    
+    if (octaves == 1) {
+        // Single octave, return simple noise
+        return (PyObject *) PyFloat_FromDouble((double) noise4(x, y, z, w));
+    } else if (octaves > 1) {
+        return (PyObject *) PyFloat_FromDouble(
             (double) fbm_noise4(x, y, z, w, octaves, persistence, lacunarity));
-	} else {
-		PyErr_SetString(PyExc_ValueError, "Expected octaves value > 0");
-		return NULL;
-	}
+    } else {
+        PyErr_SetString(PyExc_ValueError, "Expected octaves value > 0");
+        return NULL;
+    }
 }
 
 static PyMethodDef simplex_functions[] = {
-	{"noise2", (PyCFunction)py_noise2, METH_VARARGS | METH_KEYWORDS, 
-		"noise2(x, y, octaves=1, persistence=0.5, lacunarity=2.0, repeatx=None, repeaty=None, base=0.0) "
+    {"noise2", (PyCFunction)py_noise2, METH_VARARGS | METH_KEYWORDS, 
+        "noise2(x, y, octaves=1, persistence=0.5, lacunarity=2.0, repeatx=None, repeaty=None, base=0.0) "
         "return simplex noise value for specified 2D coordinate.\n\n"
-		"octaves -- specifies the number of passes, defaults to 1 (simple noise).\n\n"
-		"persistence -- specifies the amplitude of each successive octave relative\n"
-		"to the one below it. Defaults to 0.5 (each higher octave's amplitude\n"
-		"is halved). Note the amplitude of the first pass is always 1.0.\n\n"
+        "octaves -- specifies the number of passes, defaults to 1 (simple noise).\n\n"
+        "persistence -- specifies the amplitude of each successive octave relative\n"
+        "to the one below it. Defaults to 0.5 (each higher octave's amplitude\n"
+        "is halved). Note the amplitude of the first pass is always 1.0.\n\n"
         "lacunarity -- specifies the frequency of each successive octave relative\n"
         "to the one below it, similar to persistence. Defaults to 2.0.\n\n"
         "repeatx, repeaty -- specifies the interval along each axis when \n"
-		"the noise values repeat. This can be used as the tile size for creating \n"
-		"tileable textures\n\n"
-		"base -- specifies a fixed offset for the noise coordinates. Useful for\n"
-		"generating different noise textures with the same repeat interval"},
-	{"noise3", (PyCFunction)py_noise3, METH_VARARGS | METH_KEYWORDS, 
-		"noise3(x, y, z, octaves=1, persistence=0.5, lacunarity=2.0) return simplex noise value for "
-		"specified 3D coordinate\n\n"
-		"octaves -- specifies the number of passes, defaults to 1 (simple noise).\n\n"
-		"persistence -- specifies the amplitude of each successive octave relative\n"
-		"to the one below it. Defaults to 0.5 (each higher octave's amplitude\n"
-		"is halved). Note the amplitude of the first pass is always 1.0.\n\n"
+        "the noise values repeat. This can be used as the tile size for creating \n"
+        "tileable textures\n\n"
+        "base -- specifies a fixed offset for the noise coordinates. Useful for\n"
+        "generating different noise textures with the same repeat interval"},
+    {"noise3", (PyCFunction)py_noise3, METH_VARARGS | METH_KEYWORDS, 
+        "noise3(x, y, z, octaves=1, persistence=0.5, lacunarity=2.0) return simplex noise value for "
+        "specified 3D coordinate\n\n"
+        "octaves -- specifies the number of passes, defaults to 1 (simple noise).\n\n"
+        "persistence -- specifies the amplitude of each successive octave relative\n"
+        "to the one below it. Defaults to 0.5 (each higher octave's amplitude\n"
+        "is halved). Note the amplitude of the first pass is always 1.0.\n\n"
         "lacunarity -- specifies the frequency of each successive octave relative\n"
         "to the one below it, similar to persistence. Defaults to 2.0."},
-	{"noise4", (PyCFunction)py_noise4, METH_VARARGS | METH_KEYWORDS, 
-		"noise4(x, y, z, w, octaves=1, persistence=0.5, lacunarity=2.0) return simplex noise value for "
-		"specified 4D coordinate\n\n"
-		"octaves -- specifies the number of passes, defaults to 1 (simple noise).\n\n"
-		"persistence -- specifies the amplitude of each successive octave relative\n"
-		"to the one below it. Defaults to 0.5 (each higher octave's amplitude\n"
-		"is halved). Note the amplitude of the first pass is always 1.0.\n\n"
+    {"noise4", (PyCFunction)py_noise4, METH_VARARGS | METH_KEYWORDS, 
+        "noise4(x, y, z, w, octaves=1, persistence=0.5, lacunarity=2.0) return simplex noise value for "
+        "specified 4D coordinate\n\n"
+        "octaves -- specifies the number of passes, defaults to 1 (simple noise).\n\n"
+        "persistence -- specifies the amplitude of each successive octave relative\n"
+        "to the one below it. Defaults to 0.5 (each higher octave's amplitude\n"
+        "is halved). Note the amplitude of the first pass is always 1.0.\n\n"
         "lacunarity -- specifies the frequency of each successive octave relative\n"
         "to the one below it, similar to persistence. Defaults to 2.0."},
-	{NULL}
+    {NULL}
 };
 
 PyDoc_STRVAR(module_doc, "Native-code simplex noise functions");
@@ -414,15 +415,15 @@ PyDoc_STRVAR(module_doc, "Native-code simplex noise functions");
 #if PY_MAJOR_VERSION >= 3
 
 static struct PyModuleDef moduledef = {
-	PyModuleDef_HEAD_INIT,
-	"_simplex",
-	module_doc,
-	-1,                 /* m_size */
-	simplex_functions,  /* m_methods */
-	NULL,               /* m_reload (unused) */
-	NULL,               /* m_traverse */
-	NULL,               /* m_clear */
-	NULL                /* m_free */
+    PyModuleDef_HEAD_INIT,
+    "_simplex",
+    module_doc,
+    -1,                 /* m_size */
+    simplex_functions,  /* m_methods */
+    NULL,               /* m_reload (unused) */
+    NULL,               /* m_traverse */
+    NULL,               /* m_clear */
+    NULL                /* m_free */
 };
 
 PyObject *
@@ -436,7 +437,7 @@ PyInit__simplex(void)
 void
 init_simplex(void)
 {
-	Py_InitModule3("_simplex", simplex_functions, module_doc);
+    Py_InitModule3("_simplex", simplex_functions, module_doc);
 }
 
 #endif
