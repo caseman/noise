@@ -53,7 +53,7 @@ py_noise1(PyObject *self, PyObject *args, PyObject *kwargs)
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "f|iffii:noise1", kwlist,
         &x, &octaves, &persistence, &lacunarity, &repeat, &base))
         return NULL;
-    
+
     if (octaves == 1) {
         // Single octave, return simple noise
         return (PyObject *) PyFloat_FromDouble((double) noise1(x, repeat, base));
@@ -108,7 +108,7 @@ noise2(float x, float y, const float repeatx, const float repeaty, const int bas
     B = PERM[ii];
     BA = PERM[B + j];
     BB = PERM[B + jj];
-        
+
     return lerp(fy, lerp(fx, grad2(PERM[AA], x, y),
                              grad2(PERM[BA], x - 1, y)),
                     lerp(fx, grad2(PERM[AB], x, y - 1),
@@ -131,7 +131,7 @@ py_noise2(PyObject *self, PyObject *args, PyObject *kwargs)
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "ff|iffffi:noise2", kwlist,
         &x, &y, &octaves, &persistence, &lacunarity, &repeatx, &repeaty, &base))
         return NULL;
-    
+
     if (octaves == 1) {
         // Single octave, return simple noise
         return (PyObject *) PyFloat_FromDouble((double) noise2(x, y, repeatx, repeaty, base));
@@ -163,7 +163,7 @@ grad3(const int hash, const float x, const float y, const float z)
 }
 
 float
-noise3(float x, float y, float z, const int repeatx, const int repeaty, const int repeatz, 
+noise3(float x, float y, float z, const int repeatx, const int repeaty, const int repeatz,
     const int base)
 {
     float fx, fy, fz;
@@ -192,7 +192,7 @@ noise3(float x, float y, float z, const int repeatx, const int repeaty, const in
     B = PERM[ii];
     BA = PERM[B + j];
     BB = PERM[B + jj];
-        
+
     return lerp(fz, lerp(fy, lerp(fx, grad3(PERM[AA + k], x, y, z),
                                       grad3(PERM[BA + k], x - 1, y, z)),
                              lerp(fx, grad3(PERM[AB + k], x, y - 1, z),
@@ -221,10 +221,10 @@ py_noise3(PyObject *self, PyObject *args, PyObject *kwargs)
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "fff|iffiiii:noise3", kwlist,
         &x, &y, &z, &octaves, &persistence, &lacunarity, &repeatx, &repeaty, &repeatz, &base))
         return NULL;
-    
+
     if (octaves == 1) {
         // Single octave, return simple noise
-        return (PyObject *) PyFloat_FromDouble((double) noise3(x, y, z, 
+        return (PyObject *) PyFloat_FromDouble((double) noise3(x, y, z,
             repeatx, repeaty, repeatz, base));
     } else if (octaves > 1) {
         int i;
@@ -234,7 +234,7 @@ py_noise3(PyObject *self, PyObject *args, PyObject *kwargs)
         float total = 0.0f;
 
         for (i = 0; i < octaves; i++) {
-            total += noise3(x * freq, y * freq, z * freq, 
+            total += noise3(x * freq, y * freq, z * freq,
                 (const int)(repeatx*freq), (const int)(repeaty*freq), (const int)(repeatz*freq), base) * amp;
             max += amp;
             freq *= lacunarity;
@@ -248,13 +248,13 @@ py_noise3(PyObject *self, PyObject *args, PyObject *kwargs)
 }
 
 static PyMethodDef perlin_functions[] = {
-    {"noise1", (PyCFunction) py_noise1, METH_VARARGS | METH_KEYWORDS, 
+    {"noise1", (PyCFunction) py_noise1, METH_VARARGS | METH_KEYWORDS,
         "noise1(x, octaves=1, persistence=0.5, lacunarity=2.0, repeat=1024, base=0.0)\n\n"
         "1 dimensional perlin improved noise function (see noise3 for more info)"},
-    {"noise2", (PyCFunction) py_noise2, METH_VARARGS | METH_KEYWORDS, 
+    {"noise2", (PyCFunction) py_noise2, METH_VARARGS | METH_KEYWORDS,
         "noise2(x, y, octaves=1, persistence=0.5, lacunarity=2.0, repeatx=1024, repeaty=1024, base=0.0)\n\n"
         "2 dimensional perlin improved noise function (see noise3 for more info)"},
-    {"noise3", (PyCFunction) py_noise3, METH_VARARGS | METH_KEYWORDS, 
+    {"noise3", (PyCFunction) py_noise3, METH_VARARGS | METH_KEYWORDS,
         "noise3(x, y, z, octaves=1, persistence=0.5, lacunarity=2.0, "
             "repeatx=1024, repeaty=1024, repeatz=1024, base=0.0)\n\n"
         "return perlin \"improved\" noise value for specified coordinate\n\n"
