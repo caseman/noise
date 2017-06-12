@@ -15,7 +15,8 @@ ubiquitous in CGI, and greatly contributed to the huge leap in realism that
 followed.
 
 An excellent "from the horse's mouth" overview of Perlin noise can be found
-here: http://www.noisemachine.com/talk1/
+here: http://www.noisemachine.com/talk1/ (Unfortunately the website is not 
+found any more.)
 
 An excellent discussion of simplex noise can be found here:
 http://zach.in.tu-clausthal.de/teaching/cg2_08/literatur/simplexnoise.pdf
