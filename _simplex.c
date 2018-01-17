@@ -358,7 +358,7 @@ py_noise4(PyObject *self, PyObject *args, PyObject *kwargs)
 	static char *kwlist[] = {"x", "y", "z", "w", "octaves", "persistence", "lacunarity", NULL};
 
 	if (!PyArg_ParseTupleAndKeywords(args, kwargs, "ffff|iff:snoise4", kwlist,
-		&x, &y, &z, &w, &octaves, &persistence))
+		&x, &y, &z, &w, &octaves, &persistence, &lacunarity))
 		return NULL;
 	
 	if (octaves == 1) {
