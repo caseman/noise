@@ -5,6 +5,7 @@
 #include "Python.h"
 #include <math.h>
 #include <float.h>
+#include <stdlib.h>
 #include "_noise.h"
 
 // 2D simplex skew factors
@@ -35,8 +36,8 @@ noise2(float x, float y)
 	xx[1] = xx[0] - i1 + G2;
 	yy[1] = yy[0] - j1 + G2;
 
-	I = (int) i & 255;
-	J = (int) j & 255;
+	I = (int) i % period;
+	J = (int) j % period;
 	g[0] = PERM[I + PERM[J]] % 12;
 	g[1] = PERM[I + i1 + PERM[J + j1]] % 12;
 	g[2] = PERM[I + 1 + PERM[J + 1]] % 12;
@@ -105,9 +106,9 @@ noise3(float x, float y, float z)
 		pos[1][c] = pos[0][c] - o1[c] + G3;
 	}
 
-	I = (int) i & 255; 
-	J = (int) j & 255; 
-	K = (int) k & 255;
+	I = (int) i % period;
+	J = (int) j % period;
+	K = (int) k % period;
 	g[0] = PERM[I + PERM[J + PERM[K]]] % 12;
 	g[1] = PERM[I + o1[0] + PERM[J + o1[1] + PERM[o1[2] + K]]] % 12;
 	g[2] = PERM[I + o2[0] + PERM[J + o2[1] + PERM[o2[2] + K]]] % 12;
@@ -195,10 +196,10 @@ noise4(float x, float y, float z, float w) {
     float z4 = z0 - 1.0f + 4.0f*G4;
     float w4 = w0 - 1.0f + 4.0f*G4;
 
-    int I = (int)i & 255;
-    int J = (int)j & 255;
-    int K = (int)k & 255;
-    int L = (int)l & 255;
+    int I = (int)i % period;
+    int J = (int)j % period;
+    int K = (int)k % period;
+    int L = (int)l % period;
     int gi0 = PERM[I + PERM[J + PERM[K + PERM[L]]]] & 0x1f;
     int gi1 = PERM[I + i1 + PERM[J + j1 + PERM[K + k1 + PERM[L + l1]]]] & 0x1f; 
     int gi2 = PERM[I + i2 + PERM[J + j2 + PERM[K + k2 + PERM[L + l2]]]] & 0x1f; 
@@ -373,6 +374,41 @@ py_noise4(PyObject *self, PyObject *args, PyObject *kwargs)
 	}
 }
 
+static PyObject *
+randomize(PyObject *self, PyObject *args, PyObject *kwargs)
+{
+        int pperiod=DEFAULTPERIOD;
+        int pseed=0;
+        
+        static char *kwlist[] = {"period", "seed", NULL};
+        
+        if (!PyArg_ParseTupleAndKeywords(args, kwargs, "ii:randomize", kwlist,
+		&pperiod, &pseed))
+            return NULL;
+        
+        period=pperiod;
+        
+        if(PERM != &DEFAULTPERM)
+            free(PERM);
+        PERM = malloc(period*2*sizeof(unsigned char));
+        if(PERM==NULL)
+        {    
+            period=DEFAULTPERIOD;
+            PERM = &DEFAULTPERM;
+            PyErr_SetString(PyExc_ValueError, "Failed to allocate memory");
+            return NULL;
+        }
+        
+        srand(pseed);
+		
+        for(int i=0; i < period; i++){
+            PERM[i]=(unsigned char)(rand() / (RAND_MAX / 255 + 1));
+            PERM[i+period]=PERM[i];
+        }
+        
+        Py_RETURN_TRUE;
+}
+
 static PyMethodDef simplex_functions[] = {
 	{"noise2", (PyCFunction)py_noise2, METH_VARARGS | METH_KEYWORDS, 
 		"noise2(x, y, octaves=1, persistence=0.5, lacunarity=2.0, repeatx=None, repeaty=None, base=0.0) "
@@ -406,6 +442,9 @@ static PyMethodDef simplex_functions[] = {
 		"is halved). Note the amplitude of the first pass is always 1.0.\n\n"
         "lacunarity -- specifies the frequency of each successive octave relative\n"
         "to the one below it, similar to persistence. Defaults to 2.0."},
+	{"randomize", (PyCFunction)randomize, METH_VARARGS | METH_KEYWORDS, 
+		"randomize(period, seed) creates a new random permutation with period "
+		"and specified random seed"},
 	{NULL}
 };
 
@@ -428,6 +467,7 @@ static struct PyModuleDef moduledef = {
 PyObject *
 PyInit__simplex(void)
 {
+    PERM = &DEFAULTPERM;
     return PyModule_Create(&moduledef);
 }
 
@@ -436,6 +476,7 @@ PyInit__simplex(void)
 void
 init_simplex(void)
 {
+	PERM = &DEFAULTPERM;
 	Py_InitModule3("_simplex", simplex_functions, module_doc);
 }
 

@@ -12,7 +12,7 @@ else:
 
 setup(
     name='noise',
-    version='1.2.2',
+    version='1.2.3',
     description='Perlin noise for Python',
     long_description='''\
 Perlin noise is ubiquitous in modern CGI. Used for procedural texturing,
@@ -29,6 +29,8 @@ noise functions themselves do not, however.
 The Perlin improved noise functions can also generate fBm (fractal Brownian
 motion) noise by combining multiple octaves of Perlin noise. Shader functions
 for convenient generation of turbulent noise are also included.
+
+- 1.2.3 Adds ability to randomize permutation table to the C implementations
 
 - 1.2.2 AppVeyor support for Windows builds (Thanks to Federico Tomassetti)
 

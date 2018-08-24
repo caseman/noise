@@ -28,8 +28,8 @@ noise1(float x, const int repeat, const int base)
 	float fx;
 	int i = (int)floorf(x) % repeat;
 	int ii = (i + 1) % repeat;
-	i = (i & 255) + base;
-	ii = (ii & 255) + base;
+	i = (i % period) + base;
+	ii = (ii % period) + base;
 
 	x -= floorf(x);
 	fx = x*x*x * (x * (x * 6 - 15) + 10);
@@ -92,10 +92,10 @@ noise2(float x, float y, const float repeatx, const float repeaty, const int bas
 	int j = (int)floorf(fmodf(y, repeaty));
 	int ii = (int)fmodf(i + 1, repeatx);
 	int jj = (int)fmodf(j + 1, repeaty);
-	i = (i & 255) + base;
-	j = (j & 255) + base;
-	ii = (ii & 255) + base;
-	jj = (jj & 255) + base;
+	i = (i % period) + base;
+	j = (j % period) + base;
+	ii = (ii % period) + base;
+	jj = (jj % period) + base;
 
 	x -= floorf(x); y -= floorf(y);
 	fx = x*x*x * (x * (x * 6 - 15) + 10);
@@ -173,12 +173,12 @@ noise3(float x, float y, float z, const int repeatx, const int repeaty, const in
 	int ii = (int)fmodf(i + 1,  repeatx);
 	int jj = (int)fmodf(j + 1, repeaty);
 	int kk = (int)fmodf(k + 1, repeatz);
-	i = (i & 255) + base;
-	j = (j & 255) + base;
-	k = (k & 255) + base;
-	ii = (ii & 255) + base;
-	jj = (jj & 255) + base;
-	kk = (kk & 255) + base;
+	i = (i % period) + base;
+	j = (j % period) + base;
+	k = (k % period) + base;
+	ii = (ii % period) + base;
+	jj = (jj % period) + base;
+	kk = (kk % period) + base;
 
 	x -= floorf(x); y -= floorf(y); z -= floorf(z);
 	fx = x*x*x * (x * (x * 6 - 15) + 10);
@@ -254,7 +254,7 @@ static PyMethodDef perlin_functions[] = {
 		"noise2(x, y, octaves=1, persistence=0.5, lacunarity=2.0, repeatx=1024, repeaty=1024, base=0.0)\n\n"
 		"2 dimensional perlin improved noise function (see noise3 for more info)"},
 	{"noise3", (PyCFunction) py_noise3, METH_VARARGS | METH_KEYWORDS, 
-		"noise3(x, y, z, octaves=1, persistence=0.5, lacunarity=2.0, "
+		"noise3(x, y, z, octaves=1, persistence=0.5, lacunarity=2.0"
 			"repeatx=1024, repeaty=1024, repeatz=1024, base=0.0)\n\n"
 		"return perlin \"improved\" noise value for specified coordinate\n\n"
 		"octaves -- specifies the number of passes for generating fBm noise,\n"
@@ -291,6 +291,7 @@ static struct PyModuleDef moduledef = {
 PyObject *
 PyInit__perlin(void)
 {
+    PERM = &DEFAULTPERM;
     return PyModule_Create(&moduledef);
 }
 
@@ -299,6 +300,7 @@ PyInit__perlin(void)
 void
 init_perlin(void)
 {
+	PERM = &DEFAULTPERM;
 	Py_InitModule3("_perlin", perlin_functions, module_doc);
 }
 
