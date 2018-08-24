@@ -354,12 +354,12 @@ py_noise4(PyObject *self, PyObject *args, PyObject *kwargs)
 	float x, y, z, w;
 	int octaves = 1;
 	float persistence = 0.5f;
-    float lacunarity = 2.0f;
+	float lacunarity = 2.0f;
 
 	static char *kwlist[] = {"x", "y", "z", "w", "octaves", "persistence", "lacunarity", NULL};
 
 	if (!PyArg_ParseTupleAndKeywords(args, kwargs, "ffff|iff:snoise4", kwlist,
-		&x, &y, &z, &w, &octaves, &persistence))
+		&x, &y, &z, &w, &octaves, &persistence, &lacunarity))
 		return NULL;
 	
 	if (octaves == 1) {
