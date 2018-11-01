@@ -55,6 +55,9 @@ See CHANGES.txt for more details
     ],
 
     package_dir={'noise': ''},
+    package_data={'noise': ['py.typed', '__init__.pyi', '_simplex.pyi',
+                            '_perlin.pyi', 'perlin.pyi', 'shader.pyi',
+                            'shader_noise.pyi', 'test.pyi']},
     packages=['noise'],
     ext_modules=[
         Extension('noise._simplex', ['_simplex.c'], 
