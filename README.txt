@@ -18,7 +18,7 @@ An excellent "from the horse's mouth" overview of Perlin noise can be found
 here: http://www.noisemachine.com/talk1/
 
 An excellent discussion of simplex noise can be found here:
-http://zach.in.tu-clausthal.de/teaching/cg2_08/literatur/simplexnoise.pdf
+http://staffwww.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf
 
 The noise library includes native-code implementations of Perlin "improved"
 noise and Perlin simplex noise. It also includes a fast implementation of
