@@ -14,8 +14,8 @@ his work on the CGI for the movie Tron. Over time Perlin noise has become
 ubiquitous in CGI, and greatly contributed to the huge leap in realism that
 followed.
 
-An excellent "from the horse's mouth" overview of Perlin noise can be found
-here: http://www.noisemachine.com/talk1/
+This is a good overview of how Perlin noise works and some example uses:
+https://www.slideserve.com/Audrey/perlin-noise
 
 An excellent discussion of simplex noise can be found here:
 http://staffwww.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf
