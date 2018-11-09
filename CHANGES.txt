@@ -1,3 +1,9 @@
+1.2.3 -- August 8, 2018
+
+  - Added randomize function to get a new permuation table
+
+  - Fixed lacunarity not settable for 4d simplex noise
+
 1.2.2 -- March 26, 2015
 
   - AppVeyor support for Windows builds (Thanks to Federico Tomassetti)

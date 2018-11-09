@@ -76,6 +76,9 @@ class PerlinTestCase(unittest.TestCase):
 
 
 class SimplexTestCase(unittest.TestCase):
+    def test_randomize(self):
+        from noise import randomize
+        self.assertTrue(randomize(4096,23490))
 
     def test_simplex_2d_range(self):
         from noise import snoise2

@@ -7,10 +7,11 @@ fBm capabilities) and Perlin simplex noise. Also contains a fast
 Copyright (c) 2008, Casey Duncan (casey dot duncan at gmail dot com)
 """
 
-__version__ = "1.2.1"
+__version__ = "1.2.3"
 
 from . import _perlin, _simplex
 
+randomize = _simplex.randomize
 snoise2 = _simplex.noise2
 snoise3 = _simplex.noise3
 snoise4 = _simplex.noise4
