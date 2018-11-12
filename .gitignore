@@ -8,3 +8,4 @@ env
 *.egg
 *.egg-info
 .coverage
+.mypy_cache/
