@@ -7,7 +7,7 @@ fBm capabilities) and Perlin simplex noise. Also contains a fast
 Copyright (c) 2008, Casey Duncan (casey dot duncan at gmail dot com)
 """
 
-__version__ = "1.2.1"
+__version__ = "1.2.3"
 
 from . import _perlin, _simplex
 

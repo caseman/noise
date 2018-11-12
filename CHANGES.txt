@@ -1,3 +1,14 @@
+1.2.3 -- November 12, 2018
+
+  - Fix linking issue with inline functions on some platforms (e.g., Gentoo)
+    (Thanks to Tobias Klausmann)
+
+  - Fix missing lacunarity parameter in snoise4
+    (Thanks to James Martin)
+
+  - Fix broken links in README
+    (Thanks to Tom Jakubowski)
+
 1.2.2 -- March 26, 2015
 
   - AppVeyor support for Windows builds (Thanks to Federico Tomassetti)
