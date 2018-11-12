@@ -13,7 +13,7 @@
 
 #define lerp(t, a, b) ((a) + (t) * ((b) - (a)))
 
-float inline
+static inline float
 grad1(const int hash, const float x)
 {
 	float g = (hash & 7) + 1.0f;
@@ -76,7 +76,7 @@ py_noise1(PyObject *self, PyObject *args, PyObject *kwargs)
 	}
 }
 
-float inline
+static inline float
 grad2(const int hash, const float x, const float y)
 {
 	const int h = hash & 15;
@@ -154,7 +154,7 @@ py_noise2(PyObject *self, PyObject *args, PyObject *kwargs)
 	}
 }
 
-float inline
+static inline float
 grad3(const int hash, const float x, const float y, const float z)
 {
 	const int h = hash & 15;

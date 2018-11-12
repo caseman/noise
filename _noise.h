@@ -79,7 +79,7 @@ const unsigned char SIMPLEX[][4] = {
 // Note the input to these functions is not radians
 // instead x = [0, 2] for r = [0, 2*PI]
 
-inline float fast_sin(float x)
+static inline float fast_sin(float x)
 {
     // Convert the input value to a range of -1 to 1
     // x = x * (1.0f / PI);
@@ -100,7 +100,7 @@ inline float fast_sin(float x)
     #endif
 }
 
-inline float fast_cos(float x)
+static inline float fast_cos(float x)
 {
     return fast_sin(x + 0.5f);
 }

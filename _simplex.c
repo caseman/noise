@@ -126,7 +126,7 @@ noise3(float x, float y, float z)
 	return (noise[0] + noise[1] + noise[2] + noise[3]) * 32.0f;
 }
 
-inline float
+static inline float
 fbm_noise3(float x, float y, float z, int octaves, float persistence, float lacunarity) {
     float freq = 1.0f;
     float amp = 1.0f;
@@ -235,7 +235,7 @@ noise4(float x, float y, float z, float w) {
     return 27.0 * (noise[0] + noise[1] + noise[2] + noise[3] + noise[4]);
 }
 
-inline float
+static inline float
 fbm_noise4(float x, float y, float z, float w, int octaves, float persistence, float lacunarity) {
     float freq = 1.0f;
     float amp = 1.0f;
