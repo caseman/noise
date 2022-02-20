@@ -52,6 +52,10 @@ py_noise1(PyObject *self, PyObject *args, PyObject *kwargs)
 	if (!PyArg_ParseTupleAndKeywords(args, kwargs, "f|iffii:noise1", kwlist,
 		&x, &octaves, &persistence, &lacunarity, &repeat, &base))
 		return NULL;
+  if (base < 0 || base > 255) {
+    PyErr_SetString(PyExc_ValueError, "Base must be between 0 and 255");
+    return NULL;
+  }
 	
 	if (octaves == 1) {
 		// Single octave, return simple noise
@@ -130,6 +134,10 @@ py_noise2(PyObject *self, PyObject *args, PyObject *kwargs)
 	if (!PyArg_ParseTupleAndKeywords(args, kwargs, "ff|iffffi:noise2", kwlist,
 		&x, &y, &octaves, &persistence, &lacunarity, &repeatx, &repeaty, &base))
 		return NULL;
+  if (base < 0 || base > 255) {
+    PyErr_SetString(PyExc_ValueError, "Base must be between 0 and 255");
+    return NULL;
+  }
 	
 	if (octaves == 1) {
 		// Single octave, return simple noise
@@ -220,6 +228,10 @@ py_noise3(PyObject *self, PyObject *args, PyObject *kwargs)
 	if (!PyArg_ParseTupleAndKeywords(args, kwargs, "fff|iffiiii:noise3", kwlist,
 		&x, &y, &z, &octaves, &persistence, &lacunarity, &repeatx, &repeaty, &repeatz, &base))
 		return NULL;
+  if (base < 0 || base > 255) {
+    PyErr_SetString(PyExc_ValueError, "Base must be between 0 and 255");
+    return NULL;
+  }
 	
 	if (octaves == 1) {
 		// Single octave, return simple noise
